@@ -1,0 +1,65 @@
+import numpy as np
+from scipy import interpolate as inter
+from numba import jit
+import swiftemulator as se
+import pickle
+import lzma
+import time
+
+# from numba import int32, float32    # import the types
+# from numba.experimental import jitclass
+
+# spec = [
+#     ('min_k', float32),
+#     ('max_k', float32),    
+#     ('num_bins_k', int32),
+#     ('delta_bins_k', float32),
+#     ('k_bins', float32[:])
+#     ]
+
+# @jitclass(spec)
+
+
+class FlamingoBaryonResponseEmulator:
+
+    min_k = -1.5
+    max_k = 1.5
+    num_bins_k = 31
+    
+    # Load the emulator
+    def load_emulator(self):
+        with lzma.open("emulator.xz", "r") as f:
+            self.PS_ratio_emulator = pickle.load(f)
+
+
+    def predict(self, k_, z, sigma_gas, sigma_star, jet):
+
+        # Construct parameters in emulator space.
+        predictparams = {"z": z,
+                         "sigma_gas": sigma_gas,
+                         "sigma_star": sigma_star,
+                         "jet": jet}
+
+        # Call the emulator for the k array it was trained on
+        ratio,_ = self.PS_ratio_emulator.predict_values(10**self.k_bins, predictparams)
+
+        #print(np.shape(ratio))
+        #print(np.shape(self.k_bins))
+        
+        # Build a spline emulator between the points
+        ratio_interp = inter.CubicSpline(self.k_bins, ratio)
+        #ratio_interp = inter.interp1d(self.k_bins, ratio)
+
+        # Return the interpolated ratios
+        ret = ratio_interp(np.log10(k_)), np.zeros(np.shape(k_))
+
+        
+        return ret
+        
+    def __init__(self):
+        self.load_emulator()
+
+        # Compute emulator interval
+        self.delta_bins_k = (self.max_k - self.min_k) / (self.num_bins_k - 1)
+
+        self.k_bins = np.linspace(self.min_k, self.max_k, self.num_bins_k)
