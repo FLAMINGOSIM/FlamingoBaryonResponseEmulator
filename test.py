@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 from pylab import *
 from matplotlib.pyplot import cm
 
-k_min = 10**-2.0
+k_min = 10**-1.5
 k_max = 10**1.5
-num_bins_k = 71
+num_bins_k = 61
 
-k_min_plot = 0.006
+k_min_plot = 0.02
 k_max_plot = 50
 
 bins_k = 10**(np.linspace(np.log10(k_min), np.log10(k_max), num_bins_k))

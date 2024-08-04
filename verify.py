@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 from pylab import *
 from matplotlib.pyplot import cm
 
-k_min = 10**-2.0
+k_min = 10**-1.5
 k_max = 10**1.5
-num_bins_k = 36
+num_bins_k = 61
 
-k_min_plot = 0.006
+k_min_plot = 0.02
 k_max_plot = 50
 
 #z_predict = [0., 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]

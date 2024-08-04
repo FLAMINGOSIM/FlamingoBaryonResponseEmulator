@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 from pylab import *
 from matplotlib.pyplot import cm
 
-k_min = 10**-2.0
+k_min = 10**-1.5
 k_max = 10**1.5
-num_bins_k = 36
+num_bins_k = 31
 
-k_min_plot = 0.006
+k_min_plot = 0.02
 k_max_plot = 50
 
 z_train = [0.,  0.5,  1.0, 1.5,  2.0]
@@ -136,7 +136,7 @@ print("Setting up emulator range")
 model_specification = se.ModelSpecification(
     number_of_parameters=4,
     parameter_names=["z", "sigma_gas", "sigma_star", "jet"],
-    parameter_limits=[[0., 1.0], [-8., 2.], [-1., 0.], [-1., 2.]],
+    parameter_limits=[[0., 1.0], [-8., 2.], [-1., 0.], [0., 1.]],
     parameter_printable_names=["Redshift", "fgas sigma", "M* sigma", "Jet model"],
 )
 
