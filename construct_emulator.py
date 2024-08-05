@@ -32,7 +32,7 @@ model_train = [[-8., 0., 0],   # [fgas, M*, jet 0/1]
 
 import make_training_data as train
 
-bins_k, bins_R, labels, color_m, color_z, sigmas_gas, sigmas_star, jets, redshifts = train.make_training_data(z_train, model_train, k_min, k_max, num_bins_k)
+bins_k, bins_R, labels, color_m, color_z, sigmas_gas, sigmas_star, jets, redshifts = train.make_training_data(z_train, model_train, k_min, k_max, num_bins_k, False)
 
 print("Done loading data! (%d runs)"%len(sigmas_gas))
 
@@ -153,7 +153,7 @@ for i in range(num_runs):
     independent = bins_k[i]
     dependent = bins_R[i]
     dependent_error = 0.0001 * bins_k[i]
-#    dependent_error[dependent_error > 0.001] = 0.001
+    #dependent_error[dependent_error > 0.0001] = 0.0001
     modelvalues[i] = {"independent": independent,
                       "dependent": dependent,
                       "dependent_error": dependent_error}
