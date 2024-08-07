@@ -184,11 +184,16 @@ fig.savefig("Mstar_variations.png", dpi=200)
 ############################################
 
 # Variation of sigma for thermal AGN
-models = np.array([[0., 0, 0.],
+models = np.array([
+#                    [0., 0, -1.0],
+#                    [0., 0, -0.5],
+                    [0., 0, 0.],
                    [0., 0., 0.25],
                    [0., 0., 0.50],
                    [0., 0., 0.75],
                    [0., 0., 1.0],
+#                   [0., 0., 1.5],
+#                   [0., 0., 2.0],
 ])
 colors_z = cm.plasma(np.linspace(0., 0.9, len(models)))
 
@@ -220,8 +225,49 @@ ax.vlines(k_max, -100, 100, 'k', ls='--', lw=1)
 ax.legend(loc="lower left", fancybox=True, framealpha=0, handlelength=1, ncol=2)
 ax.text(k_min * 1.2, 1.13, "$z=%3.2f$"%0., va="top", ha="left")
 
-fig.savefig("Jetamount_variations.png", dpi=200)
+fig.savefig("Jetamount_variations_0sigma.png", dpi=200)
 
+
+############################################
+
+# Variation of sigma for thermal AGN
+models = np.array([[-2., 0, 0.],
+                   [-2., 0., 0.25],
+                   [-2., 0., 0.50],
+                   [-2., 0., 0.75],
+                   [-2., 0., 1.0],
+])
+colors_z = cm.plasma(np.linspace(0., 0.9, len(models)))
+
+# ---------------------------                  
+fig, axs = plt.subplots(nrows=1, ncols=1)
+
+ax = axs
+ax.set_xscale("log")
+
+# Reference
+ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=1)
+
+# Plot the data
+for i in range(len(models)):
+    pred_R,_ = emulator.predict(bins_k, 0., models[i][0], models[i][1], models[i][2])
+    ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="%d%%JET fgas-2sigma"%(models[i][2]*100))
+
+# Plot range
+ax.set_xlim(k_min_plot, k_max_plot)
+ax.set_ylim(0.72, 1.15)
+ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
+ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
+
+# Fitting range
+ax.vlines(k_min, -100, 100, 'k', ls='--', lw=1)
+ax.vlines(k_max, -100, 100, 'k', ls='--', lw=1)
+
+# Legend and model
+ax.legend(loc="lower left", fancybox=True, framealpha=0, handlelength=1, ncol=2)
+ax.text(k_min * 1.2, 1.13, "$z=%3.2f$"%0., va="top", ha="left")
+
+fig.savefig("Jetamount_variations_2sigma.png", dpi=200)
 
 ############################################
 
