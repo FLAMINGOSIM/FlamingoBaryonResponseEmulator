@@ -119,16 +119,16 @@ def PS_ratio(k, z, sigma_gas, sigma_star, jet, fix_low_k_norm):
     k_data = data[:,0] / h 
     P_data = data[:,1]
 
-    #print("model:", model, "z=", z, "R(-inf)=", P_data[0])
-    
     # Build linear interpolator 
     #interpolator = inter.interp1d(np.log10(k_data), P_data)
     interpolator = inter.CubicSpline(np.log10(k_data), P_data)
 
-    if fix_low_k_norm:
-        offset = (1 - interpolator(-2.5))
+    if fix_low_k_norm and jet == 1.:
+        offset = (0.99985 + 0.000034*z - interpolator(-2.))
         P_data += offset
         interpolator = inter.CubicSpline(np.log10(k_data), P_data)
+
+    #print("model:", model, "z=", z, "R(-inf)=", P_data[0])
 
     return interpolator(np.log10(k))
 

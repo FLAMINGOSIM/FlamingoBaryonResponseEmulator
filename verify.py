@@ -66,7 +66,7 @@ rcParams.update(params)
 # Load some test data    
 import make_training_data as train
 
-bins_k, bins_R, labels, color_m, color_z, sigmas_gas, sigmas_star, jets, redshifts = train.make_training_data(z_predict, model_predict, k_min, k_max, num_bins_k, False)
+bins_k, bins_R, labels, color_m, color_z, sigmas_gas, sigmas_star, jets, redshifts = train.make_training_data(z_predict, model_predict, k_min, k_max, num_bins_k, True)
 
 num_runs = len(sigmas_gas)
         

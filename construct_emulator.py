@@ -32,7 +32,7 @@ model_train = [[-8., 0., 0],   # [fgas, M*, jet 0/1]
 
 import make_training_data as train
 
-bins_k, bins_R, labels, color_m, color_z, sigmas_gas, sigmas_star, jets, redshifts = train.make_training_data(z_train, model_train, k_min, k_max, num_bins_k, False)
+bins_k, bins_R, labels, color_m, color_z, sigmas_gas, sigmas_star, jets, redshifts = train.make_training_data(z_train, model_train, k_min, k_max, num_bins_k, True)
 
 print("Done loading data! (%d runs)"%len(sigmas_gas))
 
@@ -170,10 +170,13 @@ start_time = time.time()
 
 from swiftemulator.emulators import gaussian_process
 from swiftemulator.mean_models.polynomial import PolynomialMeanModel
+from swiftemulator.mean_models.fixed import FixedMeanModel
 
 #`polynomial_model = PolynomialMeanModel(degree=2)
+mean_model = FixedMeanModel()
+mean_model.model = 1.0
 
-PS_ratio_emulator = gaussian_process.GaussianProcessEmulator()
+PS_ratio_emulator = gaussian_process.GaussianProcessEmulator(mean_model=mean_model)
 PS_ratio_emulator.fit_model(model_specification=model_specification,
                             model_parameters=model_parameters,
                             model_values=model_values)
