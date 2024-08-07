@@ -108,7 +108,7 @@ def get_index_flamingo_arrays(sigma_gas, sigma_star, jet):
 # @ Return the PS ratio for a given model and redshift
 # at a given k [h / Mpc] by interpolating nearby bins
 #
-def PS_ratio(k, z, sigma_gas, sigma_star, jet, fix_low_k_norm):
+def PS_ratio(k, z, sigma_gas, sigma_star, jet, fix_low_k_norm, smooth_P):
     
     index = index_from_z(z)
     model = model_from_props(sigma_gas, sigma_star, jet)
@@ -119,6 +119,15 @@ def PS_ratio(k, z, sigma_gas, sigma_star, jet, fix_low_k_norm):
     k_data = data[:,0] / h 
     P_data = data[:,1]
 
+    for i in range(1, np.size(P_data) - 1):
+        if P_data[i] < 0.9 * 0.5 * (P_data[i - 1] + P_data[i + 1]):
+            P_data[i] = 0.5 * (P_data[i - 1] + P_data[i + 1])
+
+    for i in range(1, np.size(P_data) - 1):
+        if P_data[i] < 0.98 * 0.5 * (P_data[i - 1] + P_data[i + 1]) and k_data[i] < 10:
+            P_data[i] = 0.5 * (P_data[i - 1] + P_data[i + 1])
+
+            
     # Build linear interpolator 
     #interpolator = inter.interp1d(np.log10(k_data), P_data)
     interpolator = inter.CubicSpline(np.log10(k_data), P_data)
@@ -134,7 +143,7 @@ def PS_ratio(k, z, sigma_gas, sigma_star, jet, fix_low_k_norm):
 
 ###########################################
 
-def make_training_data(z_train, model_train, k_min, k_max, num_bins_k, fix_low_k_norm=True, rand_k_norm=0.):
+def make_training_data(z_train, model_train, k_min, k_max, num_bins_k, fix_low_k_norm=True, smooth_P=True, rand_k_norm=0.):
 
     bins_k = []
     bins_R = []
@@ -158,7 +167,7 @@ def make_training_data(z_train, model_train, k_min, k_max, num_bins_k, fix_low_k
             index_flamingo = get_index_flamingo_arrays(sigma_gas, sigma_star, jet)
             
             my_k = 10**(np.linspace(np.log10(k_min), np.log10(k_max), num_bins_k) + np.random.random(num_bins_k) * rand_k_norm - rand_k_norm / 2. )
-            my_R = PS_ratio(my_k, z, sigma_gas, sigma_star, jet, fix_low_k_norm)
+            my_R = PS_ratio(my_k, z, sigma_gas, sigma_star, jet, fix_low_k_norm, smooth_P)
             bins_k.append(my_k)
             bins_R.append(my_R)
             color_model.append(FLAMINGO_colors[index_flamingo])

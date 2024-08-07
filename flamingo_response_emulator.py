@@ -52,7 +52,6 @@ class FlamingoBaryonResponseEmulator:
 
         # Return the interpolated ratios
         ret = ratio_interp(np.log10(k_)), np.zeros(np.shape(k_))
-
         
         return ret
         

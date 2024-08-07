@@ -32,7 +32,7 @@ model_train = [[-8., 0., 0],   # [fgas, M*, jet 0/1]
 
 import make_training_data as train
 
-bins_k, bins_R, labels, color_m, color_z, sigmas_gas, sigmas_star, jets, redshifts = train.make_training_data(z_train, model_train, k_min, k_max, num_bins_k, True)
+bins_k, bins_R, labels, color_m, color_z, sigmas_gas, sigmas_star, jets, redshifts = train.make_training_data(z_train, model_train, k_min, k_max, num_bins_k, True, True)
 
 print("Done loading data! (%d runs)"%len(sigmas_gas))
 

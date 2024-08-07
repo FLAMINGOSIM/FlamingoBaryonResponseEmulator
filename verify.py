@@ -66,7 +66,7 @@ rcParams.update(params)
 # Load some test data    
 import make_training_data as train
 
-bins_k, bins_R, labels, color_m, color_z, sigmas_gas, sigmas_star, jets, redshifts = train.make_training_data(z_predict, model_predict, k_min, k_max, num_bins_k, True)
+bins_k, bins_R, labels, color_m, color_z, sigmas_gas, sigmas_star, jets, redshifts = train.make_training_data(z_predict, model_predict, k_min, k_max, num_bins_k, True, False)
 
 num_runs = len(sigmas_gas)
         
@@ -230,7 +230,7 @@ ax.plot(bins_k[0], np.ones(np.size(bins_k[0])), ls='-', color='k', lw=1)
 # Plot the data
 for i in range(num_runs):
     #if redshifts[i] == 0.:# and sigmas_star[i] == 0. and jets[i] == 0:
-    if redshifts[i] == 0. and jets[i] == 1:
+    if redshifts[i] == 0:
         ax.plot(bins_k[i], bins_R[i], 'o', color=color_m[i], label=labels[i], lw=2, ms=2)     
         ax.plot(pred_k[i], pred_R[i], ls='--', color=color_m[i], lw=1)        
 
