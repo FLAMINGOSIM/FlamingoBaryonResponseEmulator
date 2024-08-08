@@ -48,7 +48,6 @@ class FlamingoBaryonResponseEmulator:
         
         # Build a spline emulator between the points
         ratio_interp = inter.CubicSpline(self.k_bins, ratio)
-        #ratio_interp = inter.interp1d(self.k_bins, ratio)
 
         # Return the interpolated ratios
         ret = ratio_interp(np.log10(k_))
