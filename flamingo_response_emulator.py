@@ -1,6 +1,6 @@
 import numpy as np
 from scipy import interpolate as inter
-from numba import jit
+#from numba import jit
 import swiftemulator as se
 import pickle
 import lzma
@@ -51,9 +51,12 @@ class FlamingoBaryonResponseEmulator:
         #ratio_interp = inter.interp1d(self.k_bins, ratio)
 
         # Return the interpolated ratios
-        ret = ratio_interp(np.log10(k_)), np.zeros(np.shape(k_))
+        ret = ratio_interp(np.log10(k_))
+
+        # Set the ratio at k-values below min_k to 1
+        ret[k_ < 10**self.min_k] = ratio_interp(self.min_k)
         
-        return ret
+        return ret,_
         
     def __init__(self):
         self.load_emulator()
