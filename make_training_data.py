@@ -37,7 +37,7 @@ def model_from_props(sigma_gas, sigma_star, jet):
 
     # From here: sigma_star == 0.
     
-    if jet:
+    if jet == 1.:
         if sigma_gas == -4:
             return "HYDRO_STRONG_JETS"
         elif sigma_gas == 0:
@@ -45,7 +45,7 @@ def model_from_props(sigma_gas, sigma_star, jet):
         else:
             print("Invalid sigma_gas for jets:", sigma_gas)
             exit()
-    else:        
+    elif jet == 0.:        
         if sigma_gas == -8:
             return "HYDRO_STRONGEST_AGN"
         elif sigma_gas == -4:
@@ -57,8 +57,12 @@ def model_from_props(sigma_gas, sigma_star, jet):
         elif sigma_gas == 2:
             return "HYDRO_WEAK_AGN"
         else:
-            print("Invalid sigma_gas:", s)
+            print("Invalid sigma_gas:", sigma_gas)
             exit()
+    else:
+        print("Invalid jet intensity:", jets)
+        exit()
+
 
 def get_index_flamingo_arrays(sigma_gas, sigma_star, jet):
 
@@ -78,7 +82,7 @@ def get_index_flamingo_arrays(sigma_gas, sigma_star, jet):
         exit()
 
     # From here: sigma_star == 0.
-    if jet:
+    if jet == 1.:
         if sigma_gas == -4:
             return 11
         elif sigma_gas == 0:
@@ -86,8 +90,7 @@ def get_index_flamingo_arrays(sigma_gas, sigma_star, jet):
         else:
             print("Invalid sigma_gas for jets:", sigma_gas)
             exit()
-    else:        
-
+    elif jet == 0.:        
         if sigma_gas == -8:
             return 7
         elif sigma_gas == -4:
@@ -101,7 +104,9 @@ def get_index_flamingo_arrays(sigma_gas, sigma_star, jet):
         else:
             print("Invalid sigma_gas:", sigma_gas)
             exit()
-    
+    else:
+        print("Invalid jet intensity:", jets)
+        exit()
 
         
 ##
@@ -140,6 +145,57 @@ def PS_ratio(k, z, sigma_gas, sigma_star, jet, fix_low_k_norm, smooth_P):
     #print("model:", model, "z=", z, "R(-inf)=", P_data[0])
 
     return interpolator(np.log10(k))
+
+def PS_ratio_from_model(k, z, model, fix_low_k_norm=True, smooth_P=True):
+    return PS_ratio(k, z, model[0], model[1], model[2], fix_low_k_norm, smooth_P)
+    
+
+
+##
+# @ Return whether a model exists as a raw data file
+# 
+def data_exists(model):
+    sigma_gas = model[0]
+    sigma_star = model[1]
+    jet = model[2]
+
+    if sigma_star == -1:
+        if jet != 0.:
+            return False
+        
+        if sigma_gas == 0:
+            return True
+        elif sigma_gas == -4:
+            return True
+        else:
+            return False
+    elif sigma_star != 0.:
+        return False
+    
+    # From here: sigma_star == 0.
+    
+    if jet == 1.:
+        if sigma_gas == -4:
+            return True
+        elif sigma_gas == 0:
+            return True 
+        else:
+            return False
+    elif jet == 0.:        
+        if sigma_gas == -8:
+            return True
+        elif sigma_gas == -4:
+            return True
+        elif sigma_gas == -2:
+            return True
+        elif sigma_gas == 0:
+            return True
+        elif sigma_gas == 2:
+            return True
+        else:
+            return False
+    else:
+        return False
 
 ###########################################
 
