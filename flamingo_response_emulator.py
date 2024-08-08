@@ -32,7 +32,7 @@ class FlamingoBaryonResponseEmulator:
         with lzma.open("emulator.xz", "r") as f:
             self.PS_ratio_emulator = pickle.load(f)
 
-    def predict(self, k_, z, sigma_gas, sigma_star, jet):
+    def predict(self, k_, z, sigma_gas, sigma_star, jet, return_variance=True):
 
         # Construct parameters in emulator space.
         predictparams = {
@@ -43,26 +43,34 @@ class FlamingoBaryonResponseEmulator:
         }
 
         # Call the emulator for the k array it was trained on
-        ratio, variance = self.PS_ratio_emulator.predict_values(
-            10**self.k_bins, predictparams
-        )
-
-        # print(np.shape(ratio))
-        # print(np.shape(self.k_bins))
+        if return_variance:
+            ratio, variance = self.PS_ratio_emulator.predict_values(
+                10**self.k_bins, predictparams, return_variance
+            )
+        else:
+            ratio = self.PS_ratio_emulator.predict_values(
+                10**self.k_bins, predictparams, return_variance
+            )
 
         # Build a spline emulator between the points
         ratio_interpolator = inter.CubicSpline(self.k_bins, ratio)
-        variance_interpolator = inter.CubicSpline(self.k_bins, variance)
+        if return_variance:
+            variance_interpolator = inter.CubicSpline(self.k_bins, variance)
 
         # Return the interpolated ratios
         ret_ratio = ratio_interpolator(np.log10(k_))
-        ret_variance = variance_interpolator(np.log10(k_))
+        if return_variance:
+            ret_variance = variance_interpolator(np.log10(k_))
 
         # Set the ratio at k-values below min_k to 1
         ret_ratio[k_ < 10**self.min_k] = ratio_interpolator(self.min_k)
-        ret_variance[k_ < 10**self.min_k] = 0.0
+        if return_variance:
+            ret_variance[k_ < 10**self.min_k] = 0.0
 
-        return ret_ratio, ret_variance
+        if return_variance:
+            return ret_ratio, ret_variance
+        else:
+            return ret_ratio
 
     def __init__(self):
         self.load_emulator()
