@@ -12,6 +12,7 @@ k_min = 10**-1.5
 k_max = 10**1.5
 num_bins_k = 61
 num_bins_k_data = 31
+N_sigma_error = 3
 
 k_min_plot = 2e-2
 k_max_plot = 50
@@ -86,7 +87,7 @@ ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R, _ = emulator.predict(
+    pred_R, pred_var_R = emulator.predict(
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
     if training.data_exists(models[i]):
@@ -110,6 +111,16 @@ for i in range(len(models)):
             lw=1,
             label="${\\rm fgas}%+d\\sigma$" % models[i][0],
         )
+
+    ax.fill_between(
+        bins_k,
+        pred_R - N_sigma_error * np.sqrt(pred_var_R),
+        pred_R + N_sigma_error * np.sqrt(pred_var_R),
+        color=colors_z[i],
+        alpha=0.2,
+        ec="face",
+        lw=0,
+    )
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
@@ -181,7 +192,7 @@ ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R, _ = emulator.predict(
+    pred_R, pred_var_R = emulator.predict(
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
     if training.data_exists(models[i]):
@@ -205,6 +216,16 @@ for i in range(len(models)):
             lw=1,
             label="${\\rm JET~fgas}%+d\\sigma$" % models[i][0],
         )
+
+    ax.fill_between(
+        bins_k,
+        pred_R - N_sigma_error * np.sqrt(pred_var_R),
+        pred_R + N_sigma_error * np.sqrt(pred_var_R),
+        color=colors_z[i],
+        alpha=0.2,
+        ec="face",
+        lw=0,
+    )
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
@@ -273,7 +294,7 @@ ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R, _ = emulator.predict(
+    pred_R, pred_var_R = emulator.predict(
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
     if training.data_exists(models[i]):
@@ -297,6 +318,16 @@ for i in range(len(models)):
             lw=1,
             label="${\\rm M*}%+3.1f\\sigma$" % models[i][1],
         )
+
+    ax.fill_between(
+        bins_k,
+        pred_R - N_sigma_error * np.sqrt(pred_var_R),
+        pred_R + N_sigma_error * np.sqrt(pred_var_R),
+        color=colors_z[i],
+        alpha=0.2,
+        ec="face",
+        lw=0,
+    )
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
@@ -365,7 +396,7 @@ ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R, _ = emulator.predict(
+    pred_R, pred_var_R = emulator.predict(
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
     if training.data_exists(models[i]):
@@ -389,6 +420,16 @@ for i in range(len(models)):
             lw=1,
             label="${\\rm M*}%+3.1f\\sigma$" % models[i][1],
         )
+
+    ax.fill_between(
+        bins_k,
+        pred_R - N_sigma_error * np.sqrt(pred_var_R),
+        pred_R + N_sigma_error * np.sqrt(pred_var_R),
+        color=colors_z[i],
+        alpha=0.2,
+        ec="face",
+        lw=0,
+    )
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
@@ -458,7 +499,7 @@ ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R, _ = emulator.predict(
+    pred_R, pred_var_R = emulator.predict(
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
     if training.data_exists(models[i]):
@@ -482,6 +523,16 @@ for i in range(len(models)):
             lw=1,
             label="${\\rm M*}%+3.1f\\sigma$" % models[i][1],
         )
+
+    ax.fill_between(
+        bins_k,
+        pred_R - N_sigma_error * np.sqrt(pred_var_R),
+        pred_R + N_sigma_error * np.sqrt(pred_var_R),
+        color=colors_z[i],
+        alpha=0.2,
+        ec="face",
+        lw=0,
+    )
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
@@ -552,7 +603,7 @@ ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R, _ = emulator.predict(
+    pred_R, pred_var_R = emulator.predict(
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
     if training.data_exists(models[i]):
@@ -576,6 +627,16 @@ for i in range(len(models)):
             lw=1,
             label="$%d\\%%{\\rm JET~fgas}+0\\sigma$" % (models[i][2] * 100),
         )
+
+    ax.fill_between(
+        bins_k,
+        pred_R - N_sigma_error * np.sqrt(pred_var_R),
+        pred_R + N_sigma_error * np.sqrt(pred_var_R),
+        color=colors_z[i],
+        alpha=0.2,
+        ec="face",
+        lw=0,
+    )
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
@@ -646,7 +707,7 @@ ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R, _ = emulator.predict(
+    pred_R, pred_var_R = emulator.predict(
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
     if training.data_exists(models[i]):
@@ -670,6 +731,16 @@ for i in range(len(models)):
             lw=1,
             label="$%d\\%%{\\rm JET~fgas}-2\\sigma$" % (models[i][2] * 100),
         )
+
+    ax.fill_between(
+        bins_k,
+        pred_R - N_sigma_error * np.sqrt(pred_var_R),
+        pred_R + N_sigma_error * np.sqrt(pred_var_R),
+        color=colors_z[i],
+        alpha=0.2,
+        ec="face",
+        lw=0,
+    )
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
@@ -740,7 +811,7 @@ ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R, _ = emulator.predict(
+    pred_R, pred_var_R = emulator.predict(
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
     if training.data_exists(models[i]):
@@ -764,6 +835,16 @@ for i in range(len(models)):
             lw=1,
             label="$%d\\%%{\\rm JET~fgas}-4\\sigma$" % (models[i][2] * 100),
         )
+
+    ax.fill_between(
+        bins_k,
+        pred_R - N_sigma_error * np.sqrt(pred_var_R),
+        pred_R + N_sigma_error * np.sqrt(pred_var_R),
+        color=colors_z[i],
+        alpha=0.2,
+        ec="face",
+        lw=0,
+    )
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
@@ -831,7 +912,7 @@ ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R, _ = emulator.predict(
+    pred_R, pred_var_R = emulator.predict(
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
     if training.data_exists(models[i]):
@@ -855,6 +936,16 @@ for i in range(len(models)):
             lw=1,
             label="${\\rm M*}%+3.1f\\sigma$" % models[i][1],
         )
+
+    ax.fill_between(
+        bins_k,
+        pred_R - N_sigma_error * np.sqrt(pred_var_R),
+        pred_R + N_sigma_error * np.sqrt(pred_var_R),
+        color=colors_z[i],
+        alpha=0.2,
+        ec="face",
+        lw=0,
+    )
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
@@ -922,7 +1013,7 @@ ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R, _ = emulator.predict(
+    pred_R, pred_var_R = emulator.predict(
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
     if training.data_exists(models[i]):
@@ -946,6 +1037,16 @@ for i in range(len(models)):
             lw=1,
             label="${\\rm M*}%+3.1f\\sigma$" % models[i][1],
         )
+
+    ax.fill_between(
+        bins_k,
+        pred_R - N_sigma_error * np.sqrt(pred_var_R),
+        pred_R + N_sigma_error * np.sqrt(pred_var_R),
+        color=colors_z[i],
+        alpha=0.2,
+        ec="face",
+        lw=0,
+    )
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
