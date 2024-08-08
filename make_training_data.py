@@ -12,11 +12,11 @@ FLAMINGO_plots = {name: color for name, color in zip(FLAMINGO_labels,FLAMINGO_co
 # @Return the file index corresponding to a given redshift
 #
 def index_from_z(z):
-    if z > 2.0:
+    if z > 3.0:
         print("Invalid range of z:", z)
         exit()
         
-    return int(82 + (2.0 - z) / 0.05)
+    return int(62 + (3.0 - z) / 0.05)
 
 def model_from_props(sigma_gas, sigma_star, jet):
 
