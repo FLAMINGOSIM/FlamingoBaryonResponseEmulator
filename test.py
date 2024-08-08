@@ -4,31 +4,36 @@ import swiftemulator as se
 import matplotlib.pyplot as plt
 from pylab import *
 from matplotlib.pyplot import cm
+import make_training_data as training
+import math
 
+h = 0.681
 k_min = 10**-1.5
 k_max = 10**1.5
 num_bins_k = 61
+num_bins_k_data = 31
 
-k_min_plot = 0.02
+k_min_plot = 2e-2
 k_max_plot = 50
 
 bins_k = 10**(np.linspace(np.log10(k_min), np.log10(k_max), num_bins_k))
+bins_k_data = 10**(np.linspace(np.log10(k_min), np.log10(k_max), num_bins_k_data))
 
 ############################################
 
 # Plot parameters
-params = {'axes.labelsize': 10,
-'axes.titlesize': 10,
+params = {'axes.labelsize': 9,
+'axes.titlesize': 9,
 'font.size': 9,
-'legend.fontsize': 8,
+'legend.fontsize': 9,
 'xtick.labelsize': 9,
 'ytick.labelsize': 9,
-'text.usetex': False,
-'figure.figsize' : (5.15, 4.75),
-'figure.subplot.left'    : 0.125,
-'figure.subplot.right'   : 0.995,
+'text.usetex': True,
+'figure.figsize' : (4.5, 4.5),
+'figure.subplot.left'    : 0.105,
+'figure.subplot.right'   : 0.993,
 'figure.subplot.bottom'  : 0.085,
-'figure.subplot.top'     : 0.995,
+'figure.subplot.top'     : 0.93,
 'figure.subplot.wspace'  : 0.0,
 'figure.subplot.hspace'  : 0.0,
 'lines.markersize' : 6,
@@ -39,7 +44,7 @@ params = {'axes.labelsize': 10,
 'ytick.direction' : 'inout',
 }
 rcParams.update(params)
-#rc('font',**{'family':'sans-serif','sans-serif':['Times']})
+rc('font',**{'family':'sans-serif','sans-serif':['Times']})
 
 ############################################
 
@@ -50,6 +55,7 @@ emulator = FlamingoBaryonResponseEmulator()
 ############################################
 
 # Variation of sigma for thermal AGN
+redshift = 0.
 models = np.array([[-10., 0., 0],   # [fgas, M*, jet 0/1]
                    [-8., 0., 0],   
                    [-6, 0., 0.],
@@ -71,26 +77,42 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=1)
+ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R,_ = emulator.predict(bins_k, 0., models[i][0], models[i][1], models[i][2])
-    ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="fgas%+dsigma"%models[i][0])        
+    pred_R,_ = emulator.predict(bins_k, redshift, models[i][0], models[i][1], models[i][2])
+    if training.data_exists(models[i]):
+        ax.plot(bins_k, pred_R, ls='-', color=colors_z[i], lw=1, label="${\\rm fgas}%+d\\sigma$"%models[i][0])        
+
+        data_R = training.PS_ratio_from_model(bins_k_data, redshift, models[i])
+        ax.plot(bins_k_data, data_R, 'o', color=colors_z[i], lw=1, ms=2)
+    else:
+        ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="${\\rm fgas}%+d\\sigma$"%models[i][0])        
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
-ax.set_ylim(0.72, 1.15)
+ax.set_ylim(0.72, 1.14)
 ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
-ax.vlines(k_min, -100, 100, 'k', ls='--', lw=1)
-ax.vlines(k_max, -100, 100, 'k', ls='--', lw=1)
+ax.vlines(k_min, -100, 100, 'k', ls=':', lw=0.7)
+ax.vlines(k_max, -100, 100, 'k', ls=':', lw=0.7)
 
 # Legend and model
-ax.legend(loc="lower left", fancybox=True, framealpha=0, handlelength=1, ncol=2)
-ax.text(k_min * 1.2, 1.13, "$z=%3.2f$"%0., va="top", ha="left")
+legend = ax.legend(loc="lower left", fancybox=True, framealpha=1, handlelength=1, ncol=2, columnspacing=0.8, handletextpad=0.5)
+legend.get_frame().set_edgecolor('white')
+ax.text(k_min * 1.2, 1.13, "$z=%3.2f$~\n\n${\\rm M*}+0\\sigma$"%redshift, va="top", ha="left")
+
+# Extra axis
+ax2 = twiny()
+ax2.set_xscale("log")
+ax2.set_xlim(2. * math.pi / k_min / h, 2. * math.pi / k_max / h)
+ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
+ax2.tick_params(axis='x', which='major', pad=1)
+ax2.set_xticks([1, 10., 100.])
+ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 
 fig.savefig("thermal_variations.png", dpi=200)
 
@@ -116,36 +138,52 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=1)
+ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R,_ = emulator.predict(bins_k, 0., models[i][0], models[i][1], models[i][2])
-    ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="JET fgas%+dsigma"%models[i][0])        
+    pred_R,_ = emulator.predict(bins_k, redshift, models[i][0], models[i][1], models[i][2])
+    if training.data_exists(models[i]):
+        ax.plot(bins_k, pred_R, ls='-', color=colors_z[i], lw=1, label="${\\rm JET~fgas}%+d\\sigma$"%models[i][0])        
+
+        data_R = training.PS_ratio_from_model(bins_k_data, redshift, models[i])
+        ax.plot(bins_k_data, data_R, 'o', color=colors_z[i], lw=1, ms=2)
+    else:
+        ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="${\\rm JET~fgas}%+d\\sigma$"%models[i][0])        
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
-ax.set_ylim(0.72, 1.15)
+ax.set_ylim(0.72, 1.14)
 ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
-ax.vlines(k_min, -100, 100, 'k', ls='--', lw=1)
-ax.vlines(k_max, -100, 100, 'k', ls='--', lw=1)
+ax.vlines(k_min, -100, 100, 'k', ls=':', lw=0.7)
+ax.vlines(k_max, -100, 100, 'k', ls=':', lw=0.7)
 
 # Legend and model
-ax.legend(loc="lower left", fancybox=True, framealpha=0, handlelength=1, ncol=2)
-ax.text(k_min * 1.2, 1.13, "$z=%3.2f$"%0., va="top", ha="left")
+legend = ax.legend(loc="lower left", fancybox=True, framealpha=1, handlelength=1, ncol=2, columnspacing=0.8, handletextpad=0.5)
+legend.get_frame().set_edgecolor('white')
+ax.text(k_min * 1.2, 1.13, "$z=%3.2f$~\n\n${\\rm M*}+0\\sigma$"%redshift, va="top", ha="left")
+
+# Extra axis
+ax2 = twiny()
+ax2.set_xscale("log")
+ax2.set_xlim(2. * math.pi / k_min / h, 2. * math.pi / k_max / h)
+ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
+ax2.tick_params(axis='x', which='major', pad=1)
+ax2.set_xticks([1, 10., 100.])
+ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 
 fig.savefig("jet_variations.png", dpi=200)
 
-
 ############################################
 
-# Variation of sigma for thermal AGN
+# Variation of M* sigma for thermal AGN
 models = np.array([[0., -3., 0],      # [fgas, M*, jet 0/1]
                    [0., -2., 0],
                    [0., -1, 0],
+                   [0., -0.5, 0],
                    [0., 0, 0],
                    [0., 1, 0],
                    [0., 2, 0]])
@@ -158,32 +196,165 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=1)
+ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R,_ = emulator.predict(bins_k, 0., models[i][0], models[i][1], models[i][2])
-    ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="M*%+dsigma"%models[i][1])        
+    pred_R,_ = emulator.predict(bins_k, redshift, models[i][0], models[i][1], models[i][2])
+    if training.data_exists(models[i]):
+        ax.plot(bins_k, pred_R, ls='-', color=colors_z[i], lw=1, label="${\\rm M*}%+3.1f\\sigma$"%models[i][1])        
+
+        data_R = training.PS_ratio_from_model(bins_k_data, redshift, models[i])
+        ax.plot(bins_k_data, data_R, 'o', color=colors_z[i], lw=1, ms=2)
+    else:
+        ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="${\\rm M*}%+3.1f\\sigma$"%models[i][1])        
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
-ax.set_ylim(0.72, 1.15)
-ax.set_xlabel("$k~[h\\cdot{\\rm Mpc}^{-1}]$", labelpad=1)
+ax.set_ylim(0.72, 1.14)
+ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
-ax.vlines(k_min, -100, 100, 'k', ls='--', lw=1)
-ax.vlines(k_max, -100, 100, 'k', ls='--', lw=1)
+ax.vlines(k_min, -100, 100, 'k', ls=':', lw=0.7)
+ax.vlines(k_max, -100, 100, 'k', ls=':', lw=0.7)
 
 # Legend and model
-ax.legend(loc="lower left", fancybox=True, framealpha=0, handlelength=1, ncol=2)
-ax.text(k_min * 1.2, 1.13, "$z=%3.2f$ fgas=0sigma"%0., va="top", ha="left")
+legend = ax.legend(loc="lower left", fancybox=True, framealpha=1, handlelength=1, ncol=2, columnspacing=0.8, handletextpad=0.5)
+legend.get_frame().set_edgecolor('white')
+ax.text(k_min * 1.2, 1.13, "$z=%3.2f$~\n\n${\\rm fgas}+0\\sigma$"%redshift, va="top", ha="left")
 
-fig.savefig("Mstar_variations.png", dpi=200)
+# Extra axis
+ax2 = twiny()
+ax2.set_xscale("log")
+ax2.set_xlim(2. * math.pi / k_min / h, 2. * math.pi / k_max / h)
+ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
+ax2.tick_params(axis='x', which='major', pad=1)
+ax2.set_xticks([1, 10., 100.])
+ax2.set_xticklabels(["$1$", "$10$", "$100$"])
+
+fig.savefig("Mstar_variations_0sigma.png", dpi=200)
 
 ############################################
 
-# Variation of sigma for thermal AGN
+# Variation of M* sigma for thermal AGN
+models = np.array([[-2., -3., 0],      # [fgas, M*, jet 0/1]
+                   [-2., -2., 0],
+                   [-2., -1, 0],
+                   [-2., -0.5, 0],
+                   [-2., 0, 0],
+                   [-2., 1, 0],
+                   [-2., 2, 0]])
+colors_z = cm.plasma(np.linspace(0., 0.9, len(models)))
+
+# ---------------------------                  
+fig, axs = plt.subplots(nrows=1, ncols=1)
+
+ax = axs
+ax.set_xscale("log")
+
+# Reference
+ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=0.7)
+
+# Plot the data
+for i in range(len(models)):
+    pred_R,_ = emulator.predict(bins_k, redshift, models[i][0], models[i][1], models[i][2])
+    if training.data_exists(models[i]):
+        ax.plot(bins_k, pred_R, ls='-', color=colors_z[i], lw=1, label="${\\rm M*}%+3.1f\\sigma$"%models[i][1])        
+
+        data_R = training.PS_ratio_from_model(bins_k_data, redshift, models[i])
+        ax.plot(bins_k_data, data_R, 'o', color=colors_z[i], lw=1, ms=2)
+    else:
+        ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="${\\rm M*}%+3.1f\\sigma$"%models[i][1])        
+
+# Plot range
+ax.set_xlim(k_min_plot, k_max_plot)
+ax.set_ylim(0.72, 1.14)
+ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
+ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
+
+# Fitting range
+ax.vlines(k_min, -100, 100, 'k', ls=':', lw=0.7)
+ax.vlines(k_max, -100, 100, 'k', ls=':', lw=0.7)
+
+# Legend and model
+legend = ax.legend(loc="lower left", fancybox=True, framealpha=1, handlelength=1, ncol=2, columnspacing=0.8, handletextpad=0.5)
+legend.get_frame().set_edgecolor('white')
+ax.text(k_min * 1.2, 1.13, "$z=%3.2f$~\n\n${\\rm fgas}-2\\sigma$"%redshift, va="top", ha="left")
+
+# Extra axis
+ax2 = twiny()
+ax2.set_xscale("log")
+ax2.set_xlim(2. * math.pi / k_min / h, 2. * math.pi / k_max / h)
+ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
+ax2.tick_params(axis='x', which='major', pad=1)
+ax2.set_xticks([1, 10., 100.])
+ax2.set_xticklabels(["$1$", "$10$", "$100$"])
+
+fig.savefig("Mstar_variations_2sigma.png", dpi=200)
+
+
+############################################
+
+# Variation of M* sigma for thermal AGN
+models = np.array([[-4., -3., 0],      # [fgas, M*, jet 0/1]
+                   [-4., -2., 0],
+                   [-4., -1, 0],
+                   [-4., -0.5, 0],
+                   [-4., 0, 0],
+                   [-4., 1, 0],
+                   [-4., 2, 0]])
+colors_z = cm.plasma(np.linspace(0., 0.9, len(models)))
+
+# ---------------------------                  
+fig, axs = plt.subplots(nrows=1, ncols=1)
+
+ax = axs
+ax.set_xscale("log")
+
+# Reference
+ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=0.7)
+
+# Plot the data
+for i in range(len(models)):
+    pred_R,_ = emulator.predict(bins_k, redshift, models[i][0], models[i][1], models[i][2])
+    if training.data_exists(models[i]):
+        ax.plot(bins_k, pred_R, ls='-', color=colors_z[i], lw=1, label="${\\rm M*}%+3.1f\\sigma$"%models[i][1])        
+
+        data_R = training.PS_ratio_from_model(bins_k_data, redshift, models[i])
+        ax.plot(bins_k_data, data_R, 'o', color=colors_z[i], lw=1, ms=2)
+    else:
+        ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="${\\rm M*}%+3.1f\\sigma$"%models[i][1])        
+
+# Plot range
+ax.set_xlim(k_min_plot, k_max_plot)
+ax.set_ylim(0.72, 1.14)
+ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
+ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
+
+# Fitting range
+ax.vlines(k_min, -100, 100, 'k', ls=':', lw=0.7)
+ax.vlines(k_max, -100, 100, 'k', ls=':', lw=0.7)
+
+# Legend and model
+legend = ax.legend(loc="lower left", fancybox=True, framealpha=1, handlelength=1, ncol=2, columnspacing=0.8, handletextpad=0.5)
+legend.get_frame().set_edgecolor('white')
+ax.text(k_min * 1.2, 1.13, "$z=%3.2f$~\n\n${\\rm fgas}-4\\sigma$"%redshift, va="top", ha="left")
+
+# Extra axis
+ax2 = twiny()
+ax2.set_xscale("log")
+ax2.set_xlim(2. * math.pi / k_min / h, 2. * math.pi / k_max / h)
+ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
+ax2.tick_params(axis='x', which='major', pad=1)
+ax2.set_xticks([1, 10., 100.])
+ax2.set_xticklabels(["$1$", "$10$", "$100$"])
+
+fig.savefig("Mstar_variations_4sigma.png", dpi=200)
+
+############################################
+
+# Variation of jet fraction at fgas=0
 models = np.array([
 #                    [0., 0, -1.0],
 #                    [0., 0, -0.5],
@@ -204,38 +375,58 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=1)
+ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R,_ = emulator.predict(bins_k, 0., models[i][0], models[i][1], models[i][2])
-    ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="%d%%JET fgas+0sigma"%(models[i][2]*100))
+    pred_R,_ = emulator.predict(bins_k, redshift, models[i][0], models[i][1], models[i][2])
+    if training.data_exists(models[i]):
+        ax.plot(bins_k, pred_R, ls='-', color=colors_z[i], lw=1, label="$%d\\%%{\\rm JET~fgas}+0\\sigma$"%(models[i][2]*100))
+
+        data_R = training.PS_ratio_from_model(bins_k_data, redshift, models[i])
+        ax.plot(bins_k_data, data_R, 'o', color=colors_z[i], lw=1, ms=2)
+    else:
+        ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="$%d\\%%{\\rm JET~fgas}+0\\sigma$"%(models[i][2]*100))
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
-ax.set_ylim(0.72, 1.15)
+ax.set_ylim(0.72, 1.14)
 ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
-ax.vlines(k_min, -100, 100, 'k', ls='--', lw=1)
-ax.vlines(k_max, -100, 100, 'k', ls='--', lw=1)
+ax.vlines(k_min, -100, 100, 'k', ls=':', lw=0.7)
+ax.vlines(k_max, -100, 100, 'k', ls=':', lw=0.7)
 
 # Legend and model
-ax.legend(loc="lower left", fancybox=True, framealpha=0, handlelength=1, ncol=2)
-ax.text(k_min * 1.2, 1.13, "$z=%3.2f$"%0., va="top", ha="left")
+legend = ax.legend(loc="lower left", fancybox=True, framealpha=1, handlelength=1, ncol=2, columnspacing=0.8, handletextpad=0.5)
+legend.get_frame().set_edgecolor('white')
+ax.text(k_min * 1.2, 1.13, "$z=%3.2f$~\n\n${\\rm M*}+0\\sigma$"%redshift, va="top", ha="left")
+
+# Extra axis
+ax2 = twiny()
+ax2.set_xscale("log")
+ax2.set_xlim(2. * math.pi / k_min / h, 2. * math.pi / k_max / h)
+ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
+ax2.tick_params(axis='x', which='major', pad=1)
+ax2.set_xticks([1, 10., 100.])
+ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 
 fig.savefig("Jetamount_variations_0sigma.png", dpi=200)
 
-
 ############################################
 
-# Variation of sigma for thermal AGN
-models = np.array([[-2., 0, 0.],
+# Variation of jet fraction at fgas=-2
+models = np.array([
+#                    [0., 0, -1.0],
+#                    [0., 0, -0.5],
+                    [-2., 0, 0.],
                    [-2., 0., 0.25],
                    [-2., 0., 0.50],
                    [-2., 0., 0.75],
                    [-2., 0., 1.0],
+#                   [0., 0., 1.5],
+#                   [0., 0., 2.0],
 ])
 colors_z = cm.plasma(np.linspace(0., 0.9, len(models)))
 
@@ -246,37 +437,58 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=1)
+ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R,_ = emulator.predict(bins_k, 0., models[i][0], models[i][1], models[i][2])
-    ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="%d%%JET fgas-2sigma"%(models[i][2]*100))
+    pred_R,_ = emulator.predict(bins_k, redshift, models[i][0], models[i][1], models[i][2])
+    if training.data_exists(models[i]):
+        ax.plot(bins_k, pred_R, ls='-', color=colors_z[i], lw=1, label="$%d\\%%{\\rm JET~fgas}-2\\sigma$"%(models[i][2]*100))
+
+        data_R = training.PS_ratio_from_model(bins_k_data, redshift, models[i])
+        ax.plot(bins_k_data, data_R, 'o', color=colors_z[i], lw=1, ms=2)
+    else:
+        ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="$%d\\%%{\\rm JET~fgas}-2\\sigma$"%(models[i][2]*100))
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
-ax.set_ylim(0.72, 1.15)
+ax.set_ylim(0.72, 1.14)
 ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
-ax.vlines(k_min, -100, 100, 'k', ls='--', lw=1)
-ax.vlines(k_max, -100, 100, 'k', ls='--', lw=1)
+ax.vlines(k_min, -100, 100, 'k', ls=':', lw=0.7)
+ax.vlines(k_max, -100, 100, 'k', ls=':', lw=0.7)
 
 # Legend and model
-ax.legend(loc="lower left", fancybox=True, framealpha=0, handlelength=1, ncol=2)
-ax.text(k_min * 1.2, 1.13, "$z=%3.2f$"%0., va="top", ha="left")
+legend = ax.legend(loc="lower left", fancybox=True, framealpha=1, handlelength=1, ncol=2, columnspacing=0.8, handletextpad=0.5)
+legend.get_frame().set_edgecolor('white')
+ax.text(k_min * 1.2, 1.13, "$z=%3.2f$~\n\n${\\rm M*}+0\\sigma$"%redshift, va="top", ha="left")
+
+# Extra axis
+ax2 = twiny()
+ax2.set_xscale("log")
+ax2.set_xlim(2. * math.pi / k_min / h, 2. * math.pi / k_max / h)
+ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
+ax2.tick_params(axis='x', which='major', pad=1)
+ax2.set_xticks([1, 10., 100.])
+ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 
 fig.savefig("Jetamount_variations_2sigma.png", dpi=200)
 
 ############################################
 
-# Variation of sigma for thermal AGN
-models = np.array([[-4., 0, 0.],
+# Variation of jet fraction at fgas=4
+models = np.array([
+#                    [0., 0, -1.0],
+#                    [0., 0, -0.5],
+                    [-4., 0, 0.],
                    [-4., 0., 0.25],
                    [-4., 0., 0.50],
                    [-4., 0., 0.75],
                    [-4., 0., 1.0],
+#                   [0., 0., 1.5],
+#                   [0., 0., 2.0],
 ])
 colors_z = cm.plasma(np.linspace(0., 0.9, len(models)))
 
@@ -287,32 +499,49 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=1)
+ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R,_ = emulator.predict(bins_k, 0., models[i][0], models[i][1], models[i][2])
-    ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="%d%%JET fgas-4sigma"%(models[i][2]*100))
+    pred_R,_ = emulator.predict(bins_k, redshift, models[i][0], models[i][1], models[i][2])
+    if training.data_exists(models[i]):
+        ax.plot(bins_k, pred_R, ls='-', color=colors_z[i], lw=1, label="$%d\\%%{\\rm JET~fgas}-4\\sigma$"%(models[i][2]*100))
+
+        data_R = training.PS_ratio_from_model(bins_k_data, redshift, models[i])
+        ax.plot(bins_k_data, data_R, 'o', color=colors_z[i], lw=1, ms=2)
+    else:
+        ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="$%d\\%%{\\rm JET~fgas}-4\\sigma$"%(models[i][2]*100))
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
-ax.set_ylim(0.72, 1.15)
+ax.set_ylim(0.72, 1.14)
 ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
-ax.vlines(k_min, -100, 100, 'k', ls='--', lw=1)
-ax.vlines(k_max, -100, 100, 'k', ls='--', lw=1)
+ax.vlines(k_min, -100, 100, 'k', ls=':', lw=0.7)
+ax.vlines(k_max, -100, 100, 'k', ls=':', lw=0.7)
 
 # Legend and model
-ax.legend(loc="lower left", fancybox=True, framealpha=0, handlelength=1, ncol=2)
-ax.text(k_min * 1.2, 1.13, "$z=%3.2f$"%0., va="top", ha="left")
+legend = ax.legend(loc="lower left", fancybox=True, framealpha=1, handlelength=1, ncol=2, columnspacing=0.8, handletextpad=0.5)
+legend.get_frame().set_edgecolor('white')
+ax.text(k_min * 1.2, 1.13, "$z=%3.2f$~\n\n${\\rm M*}+0\\sigma$"%redshift, va="top", ha="left")
+
+# Extra axis
+ax2 = twiny()
+ax2.set_xscale("log")
+ax2.set_xlim(2. * math.pi / k_min / h, 2. * math.pi / k_max / h)
+ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
+ax2.tick_params(axis='x', which='major', pad=1)
+ax2.set_xticks([1, 10., 100.])
+ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 
 fig.savefig("Jetamount_variations_4sigma.png", dpi=200)
 
+
 ############################################
 
-# Variation of sigma for thermal AGN
+# Variation of M*sigma for JET AGN
 models = np.array([[-4, -2., 1],      # [fgas, M*, jet 0/1]
                    [-4., -1., 1],
                    [-4., 0., 1],
@@ -327,26 +556,42 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=1)
+ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R,_ = emulator.predict(bins_k, 0., models[i][0], models[i][1], models[i][2])
-    ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="M*%+dsigma"%models[i][1])        
+    pred_R,_ = emulator.predict(bins_k, redshift, models[i][0], models[i][1], models[i][2])
+    if training.data_exists(models[i]):
+        ax.plot(bins_k, pred_R, ls='-', color=colors_z[i], lw=1, label="${\\rm M*}%+3.1f\\sigma$"%models[i][1])
+
+        data_R = training.PS_ratio_from_model(bins_k_data, redshift, models[i])
+        ax.plot(bins_k_data, data_R, 'o', color=colors_z[i], lw=1, ms=2)
+    else:
+        ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="${\\rm M*}%+3.1f\\sigma$"%models[i][1])
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
-ax.set_ylim(0.72, 1.15)
-ax.set_xlabel("$k~[h\\cdot{\\rm Mpc}^{-1}]$", labelpad=1)
+ax.set_ylim(0.72, 1.14)
+ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
-ax.vlines(k_min, -100, 100, 'k', ls='--', lw=1)
-ax.vlines(k_max, -100, 100, 'k', ls='--', lw=1)
+ax.vlines(k_min, -100, 100, 'k', ls=':', lw=0.7)
+ax.vlines(k_max, -100, 100, 'k', ls=':', lw=0.7)
 
 # Legend and model
-ax.legend(loc="lower left", fancybox=True, framealpha=0, handlelength=1, ncol=2)
-ax.text(k_min * 1.2, 1.13, "$z=%3.2f$ JET fgas=-4sigma"%0., va="top", ha="left")
+legend = ax.legend(loc="lower left", fancybox=True, framealpha=1, handlelength=1, ncol=2, columnspacing=0.8, handletextpad=0.5)
+legend.get_frame().set_edgecolor('white')
+ax.text(k_min * 1.2, 1.13, "$z=%3.2f$~\n\n${\\rm JET~fgas}-4\\sigma$"%redshift, va="top", ha="left")
+
+# Extra axis
+ax2 = twiny()
+ax2.set_xscale("log")
+ax2.set_xlim(2. * math.pi / k_min / h, 2. * math.pi / k_max / h)
+ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
+ax2.tick_params(axis='x', which='major', pad=1)
+ax2.set_xticks([1, 10., 100.])
+ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 
 fig.savefig("Mstar_JET_4sigma_variations.png", dpi=200)
 
@@ -360,6 +605,7 @@ models = np.array([[0, -2., 1],      # [fgas, M*, jet 0/1]
                    [0., 2, 1]])
 colors_z = cm.plasma(np.linspace(0., 0.9, len(models)))
 
+
 # ---------------------------                  
 fig, axs = plt.subplots(nrows=1, ncols=1)
 
@@ -367,25 +613,41 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=1)
+ax.plot(bins_k, np.ones(np.size(bins_k)), ls='-', color='k', lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
-    pred_R,_ = emulator.predict(bins_k, 0., models[i][0], models[i][1], models[i][2])
-    ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="M*%+dsigma"%models[i][1])        
+    pred_R,_ = emulator.predict(bins_k, redshift, models[i][0], models[i][1], models[i][2])
+    if training.data_exists(models[i]):
+        ax.plot(bins_k, pred_R, ls='-', color=colors_z[i], lw=1, label="${\\rm M*}%+3.1f\\sigma$"%models[i][1])
+
+        data_R = training.PS_ratio_from_model(bins_k_data, redshift, models[i])
+        ax.plot(bins_k_data, data_R, 'o', color=colors_z[i], lw=1, ms=2)
+    else:
+        ax.plot(bins_k, pred_R, ls='--', color=colors_z[i], lw=1, label="${\\rm M*}%+3.1f\\sigma$"%models[i][1])
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
-ax.set_ylim(0.72, 1.15)
-ax.set_xlabel("$k~[h\\cdot{\\rm Mpc}^{-1}]$", labelpad=1)
+ax.set_ylim(0.72, 1.14)
+ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
-ax.vlines(k_min, -100, 100, 'k', ls='--', lw=1)
-ax.vlines(k_max, -100, 100, 'k', ls='--', lw=1)
+ax.vlines(k_min, -100, 100, 'k', ls=':', lw=0.7)
+ax.vlines(k_max, -100, 100, 'k', ls=':', lw=0.7)
 
 # Legend and model
-ax.legend(loc="lower left", fancybox=True, framealpha=0, handlelength=1, ncol=2)
-ax.text(k_min * 1.2, 1.13, "$z=%3.2f$ JET fgas=-0sigma"%0., va="top", ha="left")
+legend = ax.legend(loc="lower left", fancybox=True, framealpha=1, handlelength=1, ncol=2, columnspacing=0.8, handletextpad=0.5)
+legend.get_frame().set_edgecolor('white')
+ax.text(k_min * 1.2, 1.13, "$z=%3.2f$~\n\n${\\rm JET~fgas}+0\\sigma$"%redshift, va="top", ha="left")
+
+# Extra axis
+ax2 = twiny()
+ax2.set_xscale("log")
+ax2.set_xlim(2. * math.pi / k_min / h, 2. * math.pi / k_max / h)
+ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
+ax2.tick_params(axis='x', which='major', pad=1)
+ax2.set_xticks([1, 10., 100.])
+ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 
 fig.savefig("Mstar_JET_0sigma_variations.png", dpi=200)
