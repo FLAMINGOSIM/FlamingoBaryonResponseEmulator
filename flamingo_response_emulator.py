@@ -41,21 +41,24 @@ class FlamingoBaryonResponseEmulator:
                          "jet": jet}
 
         # Call the emulator for the k array it was trained on
-        ratio,_ = self.PS_ratio_emulator.predict_values(10**self.k_bins, predictparams)
+        ratio, variance = self.PS_ratio_emulator.predict_values(10**self.k_bins, predictparams)
 
         #print(np.shape(ratio))
         #print(np.shape(self.k_bins))
         
         # Build a spline emulator between the points
-        ratio_interp = inter.CubicSpline(self.k_bins, ratio)
-
+        ratio_interpolator = inter.CubicSpline(self.k_bins, ratio)
+        variance_interpolator = inter.CubicSpline(self.k_bins, variance)
+        
         # Return the interpolated ratios
-        ret = ratio_interp(np.log10(k_))
+        ret_ratio = ratio_interpolator(np.log10(k_))
+        ret_variance = variance_interpolator(np.log10(k_))
 
         # Set the ratio at k-values below min_k to 1
-        ret[k_ < 10**self.min_k] = ratio_interp(self.min_k)
+        ret_ratio[k_ < 10**self.min_k] = ratio_interpolator(self.min_k)
+        ret_variance[k_ < 10**self.min_k] = 0.
         
-        return ret,_
+        return ret_ratio, ret_variance
         
     def __init__(self):
         self.load_emulator()
