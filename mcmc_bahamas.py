@@ -64,7 +64,7 @@ all_bahamas_labels = [
 ]
 all_bahamas_fname = [
     "powtable_BAHAMAS_Theat7.6_nu0_WMAP9.dat",
-    "powtable_BAHAMAS_Theat8.0_nu0_WMAP9.dat"
+    "powtable_BAHAMAS_Theat8.0_nu0_WMAP9.dat",
 ]
 all_bahamas_colors = cm.plasma(np.linspace(0.0, 0.9, len(all_bahamas_labels)))
 all_bahamas_fit = []
@@ -230,7 +230,11 @@ for i in range(len(all_bahamas_k)):
 # Plot BAHAMAS emulator best-fit
 for i in range(len(all_bahamas_k)):
     pred_R, pred_var_R = emulator.predict(
-        bins_k, redshift, all_bahamas_fit[i][0], all_bahamas_fit[i][1], all_bahamas_fit[i][2]
+        bins_k,
+        redshift,
+        all_bahamas_fit[i][0],
+        all_bahamas_fit[i][1],
+        all_bahamas_fit[i][2],
     )
     ax.plot(
         bins_k,
