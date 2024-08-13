@@ -45,11 +45,11 @@ class FlamingoBaryonResponseEmulator:
         # Call the emulator for the k array it was trained on
         if return_variance:
             ratio, variance = self.PS_ratio_emulator.predict_values(
-                10**self.k_bins, predictparams, return_variance
+                10**self.k_bins, predictparams
             )
         else:
-            ratio = self.PS_ratio_emulator.predict_values(
-                10**self.k_bins, predictparams, return_variance
+            ratio = self.PS_ratio_emulator.predict_values_no_error(
+                10**self.k_bins, predictparams
             )
 
         # Build a spline emulator between the points
