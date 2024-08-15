@@ -12,7 +12,7 @@ k_min = 10**-1.5
 k_max = 10**1.5
 num_bins_k = 61
 num_bins_k_data = 31
-N_sigma_error = 3
+N_sigma_error = 2
 
 k_min_plot = 2e-2
 k_max_plot = 50
@@ -26,16 +26,16 @@ bins_k_data = 10 ** (np.linspace(np.log10(k_min), np.log10(k_max), num_bins_k_da
 params = {
     "axes.labelsize": 9,
     "axes.titlesize": 9,
-    "font.size": 9,
-    "legend.fontsize": 9,
+    "font.size": 8,
+    "legend.fontsize": 8,
     "xtick.labelsize": 9,
     "ytick.labelsize": 9,
     "text.usetex": True,
-    "figure.figsize": (4.5, 4.5),
-    "figure.subplot.left": 0.105,
+    "figure.figsize": (3.3333, 3.3333),
+    "figure.subplot.left": 0.135,
     "figure.subplot.right": 0.993,
-    "figure.subplot.bottom": 0.085,
-    "figure.subplot.top": 0.93,
+    "figure.subplot.bottom": 0.102,
+    "figure.subplot.top": 0.91,
     "figure.subplot.wspace": 0.0,
     "figure.subplot.hspace": 0.0,
     "lines.markersize": 6,
@@ -83,7 +83,8 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
+
 
 # Plot the data
 for i in range(len(models)):
@@ -125,7 +126,7 @@ for i in range(len(models)):
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.72, 1.14)
-ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
+ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
@@ -146,7 +147,7 @@ legend.get_frame().set_edgecolor("white")
 ax.text(
     k_min * 1.2,
     1.13,
-    "$z=%3.2f$~\n\n${\\rm M*}+0\\sigma$" % redshift,
+    "$z=%3.2f$~\n${\\rm M*}+0\\sigma$\n${\\rm JET}~0\\%%$" % redshift,
     va="top",
     ha="left",
 )
@@ -164,7 +165,7 @@ fig.savefig("thermal_variations.png", dpi=200)
 
 ############################################
 
-# Variation of sigma for thermal AGN
+# Variation of sigma for jet AGN
 models = np.array(
     [
         [-8.0, 0.0, 1],  # [fgas, M*, jet 0/1]
@@ -188,7 +189,7 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
@@ -202,7 +203,7 @@ for i in range(len(models)):
             ls="-",
             color=colors_z[i],
             lw=1,
-            label="${\\rm JET~fgas}%+d\\sigma$" % models[i][0],
+            label="${\\rm fgas}%+d\\sigma$" % models[i][0],
         )
 
         data_R = training.PS_ratio_from_model(bins_k_data, redshift, models[i])
@@ -214,7 +215,7 @@ for i in range(len(models)):
             ls="--",
             color=colors_z[i],
             lw=1,
-            label="${\\rm JET~fgas}%+d\\sigma$" % models[i][0],
+            label="${\\rm fgas}%+d\\sigma$" % models[i][0],
         )
 
     ax.fill_between(
@@ -230,7 +231,7 @@ for i in range(len(models)):
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.72, 1.14)
-ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
+ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
@@ -251,7 +252,7 @@ legend.get_frame().set_edgecolor("white")
 ax.text(
     k_min * 1.2,
     1.13,
-    "$z=%3.2f$~\n\n${\\rm M*}+0\\sigma$" % redshift,
+    "$z=%3.2f$~\n${\\rm M*}+0\\sigma$\n${\\rm JET}~100\\%%$" % redshift,
     va="top",
     ha="left",
 )
@@ -290,6 +291,7 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
 
 # Plot the data
@@ -332,7 +334,7 @@ for i in range(len(models)):
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.72, 1.14)
-ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
+ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
@@ -353,7 +355,7 @@ legend.get_frame().set_edgecolor("white")
 ax.text(
     k_min * 1.2,
     1.13,
-    "$z=%3.2f$~\n\n${\\rm fgas}+0\\sigma$" % redshift,
+    "$z=%3.2f$~\n${\\rm fgas}+0\\sigma$\n${\\rm JET}~100\\%%$" % redshift,
     va="top",
     ha="left",
 )
@@ -392,7 +394,7 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
@@ -495,7 +497,7 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
@@ -599,7 +601,7 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
@@ -703,7 +705,7 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
@@ -807,7 +809,7 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
@@ -821,7 +823,7 @@ for i in range(len(models)):
             ls="-",
             color=colors_z[i],
             lw=1,
-            label="$%d\\%%{\\rm JET~fgas}-4\\sigma$" % (models[i][2] * 100),
+            label="${\\rm JET}~%d\\%%$" % (models[i][2] * 100),
         )
 
         data_R = training.PS_ratio_from_model(bins_k_data, redshift, models[i])
@@ -833,7 +835,7 @@ for i in range(len(models)):
             ls="--",
             color=colors_z[i],
             lw=1,
-            label="$%d\\%%{\\rm JET~fgas}-4\\sigma$" % (models[i][2] * 100),
+            label="${\\rm JET}~%d\\%%$" % (models[i][2] * 100),
         )
 
     ax.fill_between(
@@ -849,7 +851,7 @@ for i in range(len(models)):
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.72, 1.14)
-ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=1)
+ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
@@ -862,7 +864,7 @@ legend = ax.legend(
     fancybox=True,
     framealpha=1,
     handlelength=1,
-    ncol=2,
+    ncol=1,
     columnspacing=0.8,
     handletextpad=0.5,
 )
@@ -870,7 +872,7 @@ legend.get_frame().set_edgecolor("white")
 ax.text(
     k_min * 1.2,
     1.13,
-    "$z=%3.2f$~\n\n${\\rm M*}+0\\sigma$" % redshift,
+    "$z=%3.2f$~\n${\\rm fgas}-4\\sigma$\n${\\rm M*}+0\\sigma$" % redshift,
     va="top",
     ha="left",
 )
@@ -908,7 +910,7 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):
@@ -1009,7 +1011,7 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(models)):

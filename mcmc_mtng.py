@@ -186,7 +186,7 @@ ax = axs
 ax.set_xscale("log")
 
 # Reference
-ax.plot(bins_k, np.ones(np.size(bins_k)), ls="-", color="k", lw=0.7)
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
 # Plot the FLAMINGO emulator data
 pred_R, pred_var_R = emulator.predict(
