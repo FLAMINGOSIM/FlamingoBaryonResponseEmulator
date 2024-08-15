@@ -25,7 +25,7 @@ k_max_plot = 50
 bins_k = 10 ** (np.linspace(np.log10(k_min), np.log10(k_max), num_bins_k))
 bins_k_data = 10 ** (np.linspace(np.log10(k_min), np.log10(k_max), num_bins_k_data))
 
-redshifts = [0.5, 1.0, 1.5, 2.0]
+redshifts = [0.0, 0.5, 1.0, 1.5, 2.0]
 colors_z = cm.plasma(np.linspace(0.0, 0.9, len(redshifts)))
 
 ############################################
@@ -235,7 +235,7 @@ for i in range(len(redshifts)):
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.72, 1.14)
-ax.set_xlabel("$k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
+ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
@@ -251,7 +251,6 @@ legend = ax.legend(
     ncol=1,
     columnspacing=0.8,
     handletextpad=0.5,
-    fontsize=7,
 )
 legend.get_frame().set_edgecolor("white")
 ax.text(
@@ -280,7 +279,6 @@ legend = ax2.legend(
     ncol=1,
     columnspacing=0.8,
     handletextpad=0.5,
-    fontsize=7,
 )
 legend.get_frame().set_edgecolor("white")
 
