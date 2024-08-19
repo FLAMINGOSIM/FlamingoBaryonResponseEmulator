@@ -21,6 +21,7 @@ FLAMINGO_colors = [
     "#999933",
     "#AA4499",
     "#882255",
+    "#ba4a00",
 ]
 FLAMINGO_labels = [
     "${\\rm L}1\\_{\\rm m}9$",
@@ -39,6 +40,7 @@ FLAMINGO_labels = [
     "PlanckNu0p24Fix ",
     "PlanckNu0p24Var",
     "LS8",
+    "ADIABATIC"
 ]
 FLAMINGO_plots = {name: color for name, color in zip(FLAMINGO_labels, FLAMINGO_colors)}
 
@@ -54,8 +56,11 @@ def index_from_z(z):
     return int(62 + (3.0 - z) / 0.05)
 
 
-def model_from_props(sigma_gas, sigma_star, jet):
+def model_from_props(sigma_gas, sigma_star, jet, model=None):
 
+    if model != None:
+        return "HYDRO_" + model
+    
     if sigma_star == -1:
         if jet != 0.0:
             print("Cannot combine jet and sigma_star!")
@@ -100,8 +105,13 @@ def model_from_props(sigma_gas, sigma_star, jet):
         exit()
 
 
-def get_index_flamingo_arrays(sigma_gas, sigma_star, jet):
+def get_index_flamingo_arrays(sigma_gas, sigma_star, jet, model=None):
 
+    if model != None:
+        for i in range(len(FLAMINGO_labels)):
+            if FLAMINGO_labels[i] == model:
+                return i
+    
     if sigma_star == -1:
         if jet != 0.0:
             print("Cannot combine jet and sigma_star!")
@@ -149,12 +159,14 @@ def get_index_flamingo_arrays(sigma_gas, sigma_star, jet):
 # @ Return the PS ratio for a given model and redshift
 # at a given k [h / Mpc] by interpolating nearby bins
 #
-def PS_ratio(k, z, sigma_gas, sigma_star, jet, fix_low_k_norm, smooth_P):
+def PS_ratio(k, z, sigma_gas, sigma_star, jet, fix_low_k_norm, smooth_P, model_name=None):
 
     index = index_from_z(z)
-    model = model_from_props(sigma_gas, sigma_star, jet)
+    model = model_from_props(sigma_gas, sigma_star, jet, model_name)
     fname = "../data/%s/ratio_%0.4d.txt" % (model, index)
 
+    print(model_name)
+    
     # Correct data for h
     data = np.loadtxt(fname)
     k_data = data[:, 0] / h
@@ -245,6 +257,7 @@ def make_training_data(
     fix_low_k_norm=True,
     smooth_P=True,
     rand_k_norm=0.0,
+    model = None,
 ):
 
     bins_k = []
@@ -266,7 +279,7 @@ def make_training_data(
             jet = model_train[i][2]
             z = z_train[j]
 
-            index_flamingo = get_index_flamingo_arrays(sigma_gas, sigma_star, jet)
+            index_flamingo = get_index_flamingo_arrays(sigma_gas, sigma_star, jet, model)
 
             my_k = 10 ** (
                 np.linspace(np.log10(k_min), np.log10(k_max), num_bins_k)
@@ -274,7 +287,7 @@ def make_training_data(
                 - rand_k_norm / 2.0
             )
             my_R = PS_ratio(
-                my_k, z, sigma_gas, sigma_star, jet, fix_low_k_norm, smooth_P
+                my_k, z, sigma_gas, sigma_star, jet, fix_low_k_norm, smooth_P, model
             )
             bins_k.append(my_k)
             bins_R.append(my_R)
