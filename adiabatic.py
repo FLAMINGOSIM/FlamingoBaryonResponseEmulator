@@ -126,13 +126,13 @@ legend = ax.legend(
     handletextpad=0.5,
 )
 legend.get_frame().set_edgecolor("white")
-#ax.text(
-#    k_min * 1.2,
-#    1.13,
-#    "$z=%3.2f$~\n${\\rm M*}+0\\sigma$\n${\\rm JET}~0\\%%$" % redshift,
-#    va="top",
-#    ha="left",
-#)
+ax.text(
+   k_min * 1.2,
+   1.13,
+  "$z=%3.2f$" % 0,
+   va="top",
+   ha="left",
+)
 
 # Extra axis
 ax2 = twiny()
