@@ -165,8 +165,6 @@ def PS_ratio(k, z, sigma_gas, sigma_star, jet, fix_low_k_norm, smooth_P, model_n
     model = model_from_props(sigma_gas, sigma_star, jet, model_name)
     fname = "../data/%s/ratio_%0.4d.txt" % (model, index)
 
-    print(model_name)
-    
     # Correct data for h
     data = np.loadtxt(fname)
     k_data = data[:, 0] / h

@@ -121,7 +121,7 @@ mean_error2 = 0
 count_points = 0
 
 for i in range(num_runs):
-    mask = bins_k[i][:] < 10.0
+    mask = bins_k[i][:] < 3.0
 
     pred = pred_R[i][mask]
     truth = bins_R[i][mask]
@@ -461,7 +461,7 @@ ax.fill_between(
 # Plot the data
 for i in range(num_runs):
     if redshifts[i] == 0.0:  # and sigmas_star[i] == 0. and jets[i] == 0:
-        ax.plot(pred_k[i], pred_R[i] / bins_R[i], ls=":", color=color_m[i], lw=1)
+        ax.plot(pred_k[i], pred_R[i] / bins_R[i], ls="-", color=color_m[i], lw=1)
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)

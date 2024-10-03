@@ -1,18 +1,22 @@
 import numpy as np
 from scipy import interpolate as inter
-#import swiftemulator as se
+import swiftemulator as se
 import matplotlib.pyplot as plt
 from pylab import *
 from matplotlib.pyplot import cm
-#import make_training_data as training
+import make_training_data as training
 import math
+from astropy.cosmology import FlatLambdaCDM
 
 h = 0.681
+Omega_b = 0.0486
+Omega_m = 0.306
+
 k_min = 10**-1.5
 k_max = 10**1.5
-num_bins_k = 61
+num_bins_k = 121
 num_bins_k_data = 31
-N_sigma_error = 2
+N_sigma_error = 3
 
 k_min_plot = 2e-2
 k_max_plot = 50
@@ -31,7 +35,7 @@ params = {
     "xtick.labelsize": 9,
     "ytick.labelsize": 9,
     "text.usetex": True,
-    "figure.figsize": (3.3333, 3.3333),
+    "figure.figsize": (3.333, 3.333),
     "figure.subplot.left": 0.135,
     "figure.subplot.right": 0.993,
     "figure.subplot.bottom": 0.102,
@@ -50,18 +54,25 @@ rc("font", **{"family": "sans-serif", "sans-serif": ["Times"]})
 
 ############################################
 
-#boxsizes = [100, 200, 400, 1000, 2800]
-#snap = [0, 0, 0, 122, 122]
+# Load FLAMINGO emulator
+from flamingo_response_emulator import FlamingoBaryonResponseEmulator
 
-boxsizes = [50, 100,  200, 400, 1000, 2800]
-snap = [11, 11, 11,  11, 122, 122]
-inverted = [0, 0, 0, 0, 0, 0]
+emulator = FlamingoBaryonResponseEmulator()
 
-colors_L = cm.plasma(np.linspace(0.0, 0.9, len(boxsizes)))
+############################################
 
-for i in range(len(inverted)):
-    if inverted[i]:
-        colors_L = np.insert(colors_L, i, colors_L[i-1], axis=0)
+# Make some plots
+models = np.array(
+    [
+        [ 2.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
+        [ 0.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
+        [-2.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
+        [-4.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
+        [-6.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
+        [-8.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
+    ]
+)
+colors_m = cm.plasma(np.linspace(0.0, 0.9, len(models)))
 
 # ---------------------------
 fig, axs = plt.subplots(nrows=1, ncols=1)
@@ -72,56 +83,33 @@ ax.set_xscale("log")
 # Reference
 ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
-# Plot the data
-for i in range(len(boxsizes)):
+# Plot the FLAMINGO emulator data
+for i in range(len(models)):
 
-    #if boxsizes[i] == 50 or boxsizes[i] == 200 or boxsizes[i] == 2800:
-    #    continue
-    
-    if inverted[i]:
-        filename = "../data_%04d/HYDRO_FIDUCIAL_INVERTED/ratio_%04d.txt"%(boxsizes[i], snap[i])
-    else:
-        filename = "../data_%04d/HYDRO_FIDUCIAL/ratio_%04d.txt"%(boxsizes[i], snap[i])        
-    data = np.loadtxt(filename)
-    k = data[:,0]
-    R = data[:,1]
+    pred_R_0, pred_var_R = emulator.predict(
+        bins_k, 0.0, models[i][0], models[i][1], models[i][2]
+    )
+    pred_R_1, pred_var_R = emulator.predict(
+        bins_k, 1.0, models[i][0], models[i][1], models[i][2]
+    )
+    ax.plot(
+        bins_k,
+        pred_R_1 / pred_R_0,
+        ls="-",
+        color=colors_m[i],
+        lw=1,
+        label="${\\rm fgas}%+d\\sigma$" % models[i][0],
+    )
 
-    ls = '-'
-    label="$L=%d~{\\rm Mpc}$"%boxsizes[i]
-    if inverted[i]:
-        ls = '--'
-        label +=" $({\\rm inverted})$"
-        
-    ax.plot(k, R, ls=ls, color=colors_L[i], lw=1, label=label)
-    
-    # pred_R, pred_var_R = emulator.predict(
-    #     bins_k, redshift, models[i][0], models[i][1], models[i][2]
-    # )
-    
-    # index = training.get_index_flamingo_arrays(models[i][0], models[i][1], models[i][2])
-    # label = training.FLAMINGO_labels[index]
-    # color = training.FLAMINGO_colors[index]
-
-    # ax.plot(
-    #     bins_k,
-    #     pred_R,
-    #     ls="-",
-    #     color=color,
-    #     lw=1,
-    #     label=label,
-    # )
-
-#ax.plot(bins_k, data_R, ls="-", color=color, lw=1, label=label)
-    
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
-ax.set_ylim(0.72, 1.14)
+ax.set_ylim(0.87, 1.13)
 ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
-ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
+ax.set_ylabel("$(P(k) / P_{\\rm DMO}(k))_{z=1} / (P(k) / P_{\\rm DMO}(k))_{z=0}~[-]$", labelpad=2)
 
 # Fitting range
-#ax.vlines(k_min, -100, 100, "k", ls=":", lw=0.7)
-#ax.vlines(k_max, -100, 100, "k", ls=":", lw=0.7)
+ax.vlines(k_min, -100, 100, "k", ls=":", lw=0.7)
+ax.vlines(k_max, -100, 100, "k", ls=":", lw=0.7)
 
 # Legend and model
 legend = ax.legend(
@@ -129,17 +117,17 @@ legend = ax.legend(
     fancybox=True,
     framealpha=1,
     handlelength=1,
-    ncol=1,
+    ncol=2,
     columnspacing=0.8,
     handletextpad=0.5,
 )
 legend.get_frame().set_edgecolor("white")
 ax.text(
-   k_min * 1.2,
-   1.13,
-   "$z=%3.2f$" % 0,
-   va="top",
-   ha="left",
+    k_min * 1.2,
+    1.12,
+    "${\\rm M*}+0\\sigma$\n${\\rm JET}~0\\%$",
+    va="top",
+    ha="left",
 )
 
 # Extra axis
@@ -151,5 +139,4 @@ ax2.tick_params(axis="x", which="major", pad=1)
 ax2.set_xticks([1, 10.0, 100.0])
 ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 
-fig.savefig("convergence.png", dpi=200)
-
+fig.savefig("evolution.png", dpi=200)
