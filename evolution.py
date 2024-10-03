@@ -64,8 +64,8 @@ emulator = FlamingoBaryonResponseEmulator()
 # Make some plots
 models = np.array(
     [
-        [ 2.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
-        [ 0.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
+        [2.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
+        [0.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
         [-2.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
         [-4.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
         [-6.0, 0.0, 0.0],  # [fgas, M*, jet 0/1]
@@ -105,7 +105,9 @@ for i in range(len(models)):
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.87, 1.13)
 ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
-ax.set_ylabel("$(P(k) / P_{\\rm DMO}(k))_{z=1} / (P(k) / P_{\\rm DMO}(k))_{z=0}~[-]$", labelpad=2)
+ax.set_ylabel(
+    "$(P(k) / P_{\\rm DMO}(k))_{z=1} / (P(k) / P_{\\rm DMO}(k))_{z=0}~[-]$", labelpad=2
+)
 
 # Fitting range
 ax.vlines(k_min, -100, 100, "k", ls=":", lw=0.7)

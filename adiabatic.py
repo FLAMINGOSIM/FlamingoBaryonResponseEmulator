@@ -84,7 +84,7 @@ for i in range(len(models)):
     pred_R, pred_var_R = emulator.predict(
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
-    
+
     index = training.get_index_flamingo_arrays(models[i][0], models[i][1], models[i][2])
     label = training.FLAMINGO_labels[index]
     color = training.FLAMINGO_colors[index]
@@ -98,13 +98,17 @@ for i in range(len(models)):
         label=label,
     )
 
-data_R = training.PS_ratio(bins_k, redshift, models[0][0], models[0][1], models[0][2], True, True, "ADIABATIC")
-index = training.get_index_flamingo_arrays(models[0][0], models[0][1], models[0][2], "ADIABATIC")
+data_R = training.PS_ratio(
+    bins_k, redshift, models[0][0], models[0][1], models[0][2], True, True, "ADIABATIC"
+)
+index = training.get_index_flamingo_arrays(
+    models[0][0], models[0][1], models[0][2], "ADIABATIC"
+)
 label = "${\\rm Adiabatic}$"
 color = training.FLAMINGO_colors[index]
 
 ax.plot(bins_k, data_R, ls="-", color=color, lw=1, label=label)
-    
+
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.72, 1.14)
@@ -127,11 +131,11 @@ legend = ax.legend(
 )
 legend.get_frame().set_edgecolor("white")
 ax.text(
-   k_min * 1.2,
-   1.13,
-  "$z=%3.2f$" % 0,
-   va="top",
-   ha="left",
+    k_min * 1.2,
+    1.13,
+    "$z=%3.2f$" % 0,
+    va="top",
+    ha="left",
 )
 
 # Extra axis
@@ -144,4 +148,3 @@ ax2.set_xticks([1, 10.0, 100.0])
 ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 
 fig.savefig("adiabatic.png", dpi=200)
-

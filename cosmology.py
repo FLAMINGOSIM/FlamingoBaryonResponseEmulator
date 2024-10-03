@@ -86,10 +86,12 @@ for i in range(len(models)):
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
     if i == 0:
-        data_R=train.PS_ratio(bins_k, redshift, 0, 0, 0, False, True, "LOW_SIGMA8_STRONGEST_AGN")
+        data_R = train.PS_ratio(
+            bins_k, redshift, 0, 0, 0, False, True, "LOW_SIGMA8_STRONGEST_AGN"
+        )
     else:
-        data_R=train.PS_ratio(bins_k, redshift, 0, 0, 0, False, True, "LOW_SIGMA8")    
-    l1, = ax.plot(
+        data_R = train.PS_ratio(bins_k, redshift, 0, 0, 0, False, True, "LOW_SIGMA8")
+    (l1,) = ax.plot(
         bins_k,
         pred_R,
         ls="-",
@@ -97,7 +99,7 @@ for i in range(len(models)):
         lw=1,
         label="${\\rm fgas}%+d\\sigma$" % models[i][0],
     )
-    l2, = ax.plot(
+    (l2,) = ax.plot(
         bins_k,
         data_R,
         ls="--",
@@ -106,11 +108,11 @@ for i in range(len(models)):
     )
     lines.append(l1)
     lines.append(l2)
-    
+
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.72, 1.14)
-#ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
+# ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
@@ -120,8 +122,8 @@ ax.vlines(k_max, -100, 100, "k", ls=":", lw=0.7)
 # Legend and model
 legend = ax.legend(
     handles=lines,
-#    loc="center left",
-    loc = (0.02, 0.23),
+    #    loc="center left",
+    loc=(0.02, 0.23),
     fancybox=True,
     framealpha=1,
     handlelength=1,
@@ -133,14 +135,19 @@ legend.get_frame().set_edgecolor("white")
 ax.text(
     k_min * 1.2,
     1.13,
-    "$z=%3.2f$~\n${\\rm M*}+0\\sigma$\n${\\rm JET}~0\\%%$\n${\\rm LS8~cosmology}$" % redshift,
+    "$z=%3.2f$~\n${\\rm M*}+0\\sigma$\n${\\rm JET}~0\\%%$\n${\\rm LS8~cosmology}$"
+    % redshift,
     va="top",
     ha="left",
 )
 ax.add_artist(legend)
 
-l1, = ax.plot([1e5, 1e5], [1, 1], 'k-', lw=1, label="${\\rm Emu.~trained~on~fiducial~cosmology}$")
-l2, = ax.plot([1e5, 1e5], [1, 1], 'k--', lw=1, label="${\\rm Sim.~using~LS8~cosmology}$")
+(l1,) = ax.plot(
+    [1e5, 1e5], [1, 1], "k-", lw=1, label="${\\rm Emu.~trained~on~fiducial~cosmology}$"
+)
+(l2,) = ax.plot(
+    [1e5, 1e5], [1, 1], "k--", lw=1, label="${\\rm Sim.~using~LS8~cosmology}$"
+)
 legend = ax.legend(
     handles=[l1, l2],
     loc="lower left",
@@ -187,13 +194,15 @@ for i in range(len(models)):
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
     if i == 0:
-        data_R=train.PS_ratio(bins_k, redshift, 0, 0, 0, False, True, "LOW_SIGMA8_STRONGEST_AGN")
+        data_R = train.PS_ratio(
+            bins_k, redshift, 0, 0, 0, False, True, "LOW_SIGMA8_STRONGEST_AGN"
+        )
     else:
-        data_R=train.PS_ratio(bins_k, redshift, 0, 0, 0, False, True, "LOW_SIGMA8")    
+        data_R = train.PS_ratio(bins_k, redshift, 0, 0, 0, False, True, "LOW_SIGMA8")
 
     ax.plot(bins_k, pred_R / data_R, ls="-", color=colors_z[i], lw=1)
 
-        
+
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.968, 1.032)
@@ -206,4 +215,3 @@ ax.vlines(k_min, -100, 100, "k", ls=":", lw=0.7)
 ax.vlines(k_max, -100, 100, "k", ls=":", lw=0.7)
 
 fig.savefig("cosmology_variations.png", dpi=200)
-

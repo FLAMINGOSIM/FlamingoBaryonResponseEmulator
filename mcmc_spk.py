@@ -76,11 +76,21 @@ for i in range(len(redshifts)):
 
     z = redshifts[i]
     mask = np.logical_and(data_z == z, data_M500 > 10**12.5)
-    ax.plot(data_M500[mask], data_fb[mask], '-', lw=0.9, color=colors_z[i], label="$z=%2.1f$"%z)
-    
+    ax.plot(
+        data_M500[mask],
+        data_fb[mask],
+        "-",
+        lw=0.9,
+        color=colors_z[i],
+        label="$z=%2.1f$" % z,
+    )
+
     ax.set_xscale("log")
     ax.set_xlabel("$M_{500, {\\rm cr}}~[{\\rm M}_\\odot]$", labelpad=0)
-    ax.set_ylabel("$f_{\\rm b}(<R_{500, {\\rm cr}}) / (\\Omega_{\\rm b} / \\Omega_{\\rm m})~[-]$", labelpad=2)
+    ax.set_ylabel(
+        "$f_{\\rm b}(<R_{500, {\\rm cr}}) / (\\Omega_{\\rm b} / \\Omega_{\\rm m})~[-]$",
+        labelpad=2,
+    )
 
     legend = ax.legend(
         loc="lower right",
@@ -92,8 +102,8 @@ for i in range(len(redshifts)):
         handletextpad=0.5,
     )
     legend.get_frame().set_edgecolor("white")
-    
-    
+
+
 fig.savefig("FLAMINGO_baryon_fraction.png", dpi=200)
 
 # ############################################
@@ -105,7 +115,7 @@ for i in range(len(redshifts)):
 
     z = redshifts[i]
     mask = np.logical_and(data_z == z, np.logical_not(np.isnan(data_fb)))
-    
+
     my_k, my_R = spk.sup_model(SO=500, z=z, M_halo=data_M500[mask], fb=data_fb[mask])
     SPK_k.append(my_k)
     SPK_R.append(my_R)
@@ -218,18 +228,12 @@ for i in range(len(redshifts)):
         ls="-",
         color=colors_z[i],
         lw=1,
-        label="$z=%2.1f$"%redshifts[i]
+        label="$z=%2.1f$" % redshifts[i],
     )
 
 # Plot SP(k)
 for i in range(len(redshifts)):
-    ax.plot(
-        SPK_k[i],
-        SPK_R[i],
-        "--",
-        color=colors_z[i],
-        lw=0.9
-    )
+    ax.plot(SPK_k[i], SPK_R[i], "--", color=colors_z[i], lw=0.9)
 
 
 # Plot range
@@ -269,8 +273,8 @@ ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
 ax2.tick_params(axis="x", which="major", pad=1)
 ax2.set_xticks([1, 10.0, 100.0])
 ax2.set_xticklabels(["$1$", "$10$", "$100$"])
-ax2.plot([0.1, 0.1], [10, 10], 'k-', lw=0.9, label="${\\rm FLAMINGO~emul.}$")
-ax2.plot([0.1, 0.1], [10, 10], 'k--', lw=0.9, label="${\\rm SP}(k)$")
+ax2.plot([0.1, 0.1], [10, 10], "k-", lw=0.9, label="${\\rm FLAMINGO~emul.}$")
+ax2.plot([0.1, 0.1], [10, 10], "k--", lw=0.9, label="${\\rm SP}(k)$")
 legend = ax2.legend(
     loc="lower right",
     fancybox=True,

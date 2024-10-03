@@ -40,7 +40,7 @@ FLAMINGO_labels = [
     "PlanckNu0p24Fix ",
     "PlanckNu0p24Var",
     "LS8",
-    "ADIABATIC"
+    "ADIABATIC",
 ]
 FLAMINGO_plots = {name: color for name, color in zip(FLAMINGO_labels, FLAMINGO_colors)}
 
@@ -60,7 +60,7 @@ def model_from_props(sigma_gas, sigma_star, jet, model=None):
 
     if model != None:
         return "HYDRO_" + model
-    
+
     if sigma_star == -1:
         if jet != 0.0:
             print("Cannot combine jet and sigma_star!")
@@ -111,7 +111,7 @@ def get_index_flamingo_arrays(sigma_gas, sigma_star, jet, model=None):
         for i in range(len(FLAMINGO_labels)):
             if FLAMINGO_labels[i] == model:
                 return i
-    
+
     if sigma_star == -1:
         if jet != 0.0:
             print("Cannot combine jet and sigma_star!")
@@ -159,7 +159,9 @@ def get_index_flamingo_arrays(sigma_gas, sigma_star, jet, model=None):
 # @ Return the PS ratio for a given model and redshift
 # at a given k [h / Mpc] by interpolating nearby bins
 #
-def PS_ratio(k, z, sigma_gas, sigma_star, jet, fix_low_k_norm, smooth_P, model_name=None):
+def PS_ratio(
+    k, z, sigma_gas, sigma_star, jet, fix_low_k_norm, smooth_P, model_name=None
+):
 
     index = index_from_z(z)
     model = model_from_props(sigma_gas, sigma_star, jet, model_name)
@@ -255,7 +257,7 @@ def make_training_data(
     fix_low_k_norm=True,
     smooth_P=True,
     rand_k_norm=0.0,
-    model = None,
+    model=None,
 ):
 
     bins_k = []
@@ -277,7 +279,9 @@ def make_training_data(
             jet = model_train[i][2]
             z = z_train[j]
 
-            index_flamingo = get_index_flamingo_arrays(sigma_gas, sigma_star, jet, model)
+            index_flamingo = get_index_flamingo_arrays(
+                sigma_gas, sigma_star, jet, model
+            )
 
             my_k = 10 ** (
                 np.linspace(np.log10(k_min), np.log10(k_max), num_bins_k)

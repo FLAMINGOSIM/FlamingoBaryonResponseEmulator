@@ -1,10 +1,12 @@
 import numpy as np
 from scipy import interpolate as inter
-#import swiftemulator as se
+
+# import swiftemulator as se
 import matplotlib.pyplot as plt
 from pylab import *
 from matplotlib.pyplot import cm
-#import make_training_data as training
+
+# import make_training_data as training
 import math
 
 h = 0.681
@@ -50,18 +52,18 @@ rc("font", **{"family": "sans-serif", "sans-serif": ["Times"]})
 
 ############################################
 
-#boxsizes = [100, 200, 400, 1000, 2800]
-#snap = [0, 0, 0, 122, 122]
+# boxsizes = [100, 200, 400, 1000, 2800]
+# snap = [0, 0, 0, 122, 122]
 
-boxsizes = [50, 100,  200, 400, 1000, 2800]
-snap = [11, 11, 11,  11, 122, 122]
+boxsizes = [50, 100, 200, 400, 1000, 2800]
+snap = [11, 11, 11, 11, 122, 122]
 inverted = [0, 0, 0, 0, 0, 0]
 
 colors_L = cm.plasma(np.linspace(0.0, 0.9, len(boxsizes)))
 
 for i in range(len(inverted)):
     if inverted[i]:
-        colors_L = np.insert(colors_L, i, colors_L[i-1], axis=0)
+        colors_L = np.insert(colors_L, i, colors_L[i - 1], axis=0)
 
 # ---------------------------
 fig, axs = plt.subplots(nrows=1, ncols=1)
@@ -75,29 +77,32 @@ ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 # Plot the data
 for i in range(len(boxsizes)):
 
-    #if boxsizes[i] == 50 or boxsizes[i] == 200 or boxsizes[i] == 2800:
+    # if boxsizes[i] == 50 or boxsizes[i] == 200 or boxsizes[i] == 2800:
     #    continue
-    
-    if inverted[i]:
-        filename = "../data_%04d/HYDRO_FIDUCIAL_INVERTED/ratio_%04d.txt"%(boxsizes[i], snap[i])
-    else:
-        filename = "../data_%04d/HYDRO_FIDUCIAL/ratio_%04d.txt"%(boxsizes[i], snap[i])        
-    data = np.loadtxt(filename)
-    k = data[:,0]
-    R = data[:,1]
 
-    ls = '-'
-    label="$L=%d~{\\rm Mpc}$"%boxsizes[i]
     if inverted[i]:
-        ls = '--'
-        label +=" $({\\rm inverted})$"
-        
+        filename = "../data_%04d/HYDRO_FIDUCIAL_INVERTED/ratio_%04d.txt" % (
+            boxsizes[i],
+            snap[i],
+        )
+    else:
+        filename = "../data_%04d/HYDRO_FIDUCIAL/ratio_%04d.txt" % (boxsizes[i], snap[i])
+    data = np.loadtxt(filename)
+    k = data[:, 0]
+    R = data[:, 1]
+
+    ls = "-"
+    label = "$L=%d~{\\rm Mpc}$" % boxsizes[i]
+    if inverted[i]:
+        ls = "--"
+        label += " $({\\rm inverted})$"
+
     ax.plot(k, R, ls=ls, color=colors_L[i], lw=1, label=label)
-    
+
     # pred_R, pred_var_R = emulator.predict(
     #     bins_k, redshift, models[i][0], models[i][1], models[i][2]
     # )
-    
+
     # index = training.get_index_flamingo_arrays(models[i][0], models[i][1], models[i][2])
     # label = training.FLAMINGO_labels[index]
     # color = training.FLAMINGO_colors[index]
@@ -111,8 +116,8 @@ for i in range(len(boxsizes)):
     #     label=label,
     # )
 
-#ax.plot(bins_k, data_R, ls="-", color=color, lw=1, label=label)
-    
+# ax.plot(bins_k, data_R, ls="-", color=color, lw=1, label=label)
+
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.72, 1.14)
@@ -120,8 +125,8 @@ ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 # Fitting range
-#ax.vlines(k_min, -100, 100, "k", ls=":", lw=0.7)
-#ax.vlines(k_max, -100, 100, "k", ls=":", lw=0.7)
+# ax.vlines(k_min, -100, 100, "k", ls=":", lw=0.7)
+# ax.vlines(k_max, -100, 100, "k", ls=":", lw=0.7)
 
 # Legend and model
 legend = ax.legend(
@@ -135,11 +140,11 @@ legend = ax.legend(
 )
 legend.get_frame().set_edgecolor("white")
 ax.text(
-   k_min * 1.2,
-   1.13,
-   "$z=%3.2f$" % 0,
-   va="top",
-   ha="left",
+    k_min * 1.2,
+    1.13,
+    "$z=%3.2f$" % 0,
+    va="top",
+    ha="left",
 )
 
 # Extra axis
@@ -152,4 +157,3 @@ ax2.set_xticks([1, 10.0, 100.0])
 ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 
 fig.savefig("convergence.png", dpi=200)
-
