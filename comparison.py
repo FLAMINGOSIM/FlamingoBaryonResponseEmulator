@@ -93,6 +93,33 @@ def ratio_eagle(k):
 
 ############################################
 
+data_horizon = np.loadtxt("./VD20/powtable_Hz-AGN.dat")
+horizon_z = data_horizon[:, 0]
+horizon_k = data_horizon[:, 1]
+horizon_P = data_horizon[:, 2]
+
+data_horizon_dmo = np.loadtxt("./VD20/powtable_Hz-DM.dat")
+horizon_dmo_z = data_horizon_dmo[:, 0]
+horizon_dmo_k = data_horizon_dmo[:, 1]
+horizon_dmo_P = data_horizon_dmo[:, 2]
+
+# Select z = 0 only
+mask = horizon_z == 0.0
+horizon_k = horizon_k[mask]
+horizon_P = horizon_P[mask]
+
+mask = horizon_dmo_z == 0.0
+horizon_dmo_k = horizon_dmo_k[mask]
+horizon_dmo_P = horizon_dmo_P[mask]
+
+horizon_R = horizon_P / horizon_dmo_P
+
+def ratio_horizon(k):
+    interpolator = inter.CubicSpline(np.log10(horizon_k), horizon_R)
+    return interpolator(np.log10(k))
+
+############################################
+
 data_simba = np.loadtxt("./VD20/powtable_SIMBA.dat")
 simba_z = data_simba[:, 0]
 simba_k = data_simba[:, 1]
@@ -145,7 +172,9 @@ illustris_R[illustris_k < 1e-1] = 1.
 
 def ratio_illustris(k):
     interpolator = inter.CubicSpline(np.log10(illustris_k), illustris_R)
-    return interpolator(np.log10(k))
+    R = interpolator(np.log10(k))
+    R[k < 1e-1] = 1.
+    return R
 
 ############################################
 
@@ -359,7 +388,11 @@ lines.append(l)
 l, = ax.plot(bins_k, ratio_simba(bins_k), "-", color='b', lw=0.7, label="${\\rm Simba}$")
 lines.append(l)
 
-# Plot SIMBA data
+# Plot Horizon-AGN data
+l, = ax.plot(bins_k, ratio_horizon(bins_k), "-", color='c', lw=0.7, label="${\\rm Horizon-AGN}$")
+lines.append(l)
+
+# Plot Illustris data
 l, = ax.plot(bins_k, ratio_illustris(bins_k), "-", color='y', lw=0.7, label="${\\rm Illustris}$")
 lines.append(l)
 

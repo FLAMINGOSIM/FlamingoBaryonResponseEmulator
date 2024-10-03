@@ -163,7 +163,7 @@ legend.get_frame().set_edgecolor("white")
 # Extra axis
 ax2 = ax.twiny()
 ax2.set_xscale("log")
-ax2.set_xlim(2.0 * math.pi / k_min / h, 2.0 * math.pi / k_max / h)
+ax2.set_xlim(2.0 * math.pi / k_min_plot / h, 2.0 * math.pi / k_max_plot / h)
 ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
 ax2.tick_params(axis="x", which="major", pad=1)
 ax2.set_xticks([1, 10.0, 100.0])
