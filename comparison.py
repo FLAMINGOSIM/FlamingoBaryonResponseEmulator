@@ -31,11 +31,11 @@ params = {
     "xtick.labelsize": 9,
     "ytick.labelsize": 9,
     "text.usetex": True,
-    "figure.figsize": (3.3333, 3.3333),
+    "figure.figsize": (3.3333, 4.0),
     "figure.subplot.left": 0.135,
     "figure.subplot.right": 0.993,
-    "figure.subplot.bottom": 0.102,
-    "figure.subplot.top": 0.91,
+    "figure.subplot.bottom": 0.09,
+    "figure.subplot.top": 0.92,
     "figure.subplot.wspace": 0.0,
     "figure.subplot.hspace": 0.0,
     "lines.markersize": 6,
@@ -180,15 +180,15 @@ def ratio_illustris(k):
 
 all_bahamas_short_names = ["bahamas_agn7p6", "bahamas_agn8p0"]
 all_bahamas_labels = [
-    "BAHAMAS-$\\Delta$T7.6",
-    "BAHAMAS-$\\Delta$T8.0",
+    "${\\rm BAHAMAS}\\textnormal{-}\\Delta T7.6$",
+    "${\\rm BAHAMAS}\\textnormal{-}\\Delta T8.0$",
 ]
 all_bahamas_fname = [
     "powtable_BAHAMAS_Theat7.6_nu0_WMAP9.dat",
     "powtable_BAHAMAS_Theat8.0_nu0_WMAP9.dat",
 ]
 all_bahamas_colors = ['g', 'g']
-all_bahamas_ls = ['--', '-.']
+all_bahamas_ls = ['-', '--']
 all_bahamas_fit = []
 all_bahamas_k = []
 all_bahamas_R = []
@@ -233,25 +233,25 @@ def ratio_bahamas(k, i):
 ############################################
 
 all_cowls_short_names = [
-#    "cowl_agn",
+    "cowl_agn",
     "cowl_agn8p3",
     "cowl_agn8p5",
     "cowl_agn8p7"
 ]
 all_cowls_labels = [
-#    "C-OWLS-AGN",
-    "C-OWLS-AGN-$\\Delta$T8.3",
-    "C-OWLS-AGN-$\\Delta$T8.5",
-    "C-OWLS-AGN-$\\Delta$T8.7",
+    "${\\rm C\\textnormal{-}OWLS\\textnormal{-}AGN}$",
+    "${\\rm C\\textnormal{-}OWLS\\textnormal{-}AGN}\\textnormal{-}\\Delta T8.3$",
+    "${\\rm C\\textnormal{-}OWLS\\textnormal{-}AGN}\\textnormal{-}\\Delta T8.5$",
+    "${\\rm C\\textnormal{-}OWLS\\textnormal{-}AGN}\\textnormal{-}\\Delta T8.7$",
 ]
 all_cowls_fname = [
-#    "powtable_C-OWLS_AGN_WMAP7.dat",
+    "powtable_C-OWLS_AGN_WMAP7.dat",
     "powtable_C-OWLS_AGN_Theat8.3_WMAP7.dat",
     "powtable_C-OWLS_AGN_Theat8.5_WMAP7.dat",
     "powtable_C-OWLS_AGN_Theat8.7_WMAP7.dat",
 ]
-all_cowls_colors = ['r', 'r', 'r']
-all_cowls_ls = ['-', '--', '-.']
+all_cowls_colors = ['r', 'r', 'r', 'r']
+all_cowls_ls = ['-', '-.', '--', ':']
 all_cowls_fit = []
 all_cowls_k = []
 all_cowls_R = []
@@ -306,11 +306,13 @@ emulator = FlamingoBaryonResponseEmulator()
 redshift = 0.0
 models = np.array(
     [
+        [3.0, 0.0, 0.0],
         [0.0, 0.0, 0.0],
         [-8.0, 0.0, 0],
+        [-8.0, 0.0, 1.0],
     ]
 )
-colors_z = cm.plasma(np.linspace(0.9, 0.2, len(models)))
+colors_z = cm.plasma(np.linspace(0.9, 0.15, len(models)))
 
 # Load some test data
 import make_training_data as train
@@ -326,57 +328,26 @@ ax.set_xscale("log")
 ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 lines = []
 
-# Plot the data
-for i in range(len(models)):
-    pred_R, pred_var_R = emulator.predict(
-        bins_k, redshift, models[i][0], models[i][1], models[i][2]
-    )
-    l, = ax.plot(
-        bins_k,
-        pred_R,
-        'o-',
-        ms=2,
-        #ls="-",
-        color=colors_z[i],
-        lw=1,
-        label="${\\rm FLAMINGO~fgas}%+d\\sigma, M_*+0\\sigma, {\\rm JET}~0\\%%$" % models[i][0],
-    )
-    lines.append(l)
-
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
-ax.set_ylim(0.72, 1.14)
+ax.set_ylim(0.62, 1.14)
 ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
+ax.set_yticks([0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1])
+#ax.set_yticklabels(["$1$", "$10$", "$100$"])
+
 
 # Fitting range
-#ax.vlines(k_min, -100, 100, "k", ls=":", lw=0.7)
-#ax.vlines(k_max, -100, 100, "k", ls=":", lw=0.7)
+ax.vlines(k_min, 0.885, 100, "k", ls=":", lw=0.7)
+ax.vlines(k_max, 0.66, 100, "k", ls=":", lw=0.7)
 
-# Legend and model
-legend = ax.legend(
-    handles=lines,
-    loc="upper left",
-#    loc="lower left",
-#   loc = (0.02, 0.71),
-    fancybox=True,
-    framealpha=1,
-    handlelength=1,
-    ncol=1,
-    fontsize=7,
-    columnspacing=0.8,
-    handletextpad=0.5,
+ax.text(
+    k_max_plot * 0.7,
+    0.63,
+    "$z=0$",
+    va="bottom",
+    ha="right",
 )
-legend.get_frame().set_edgecolor("white")
-ax.add_artist(legend)
-#ax.text(
-#    k_min_plot * 1.2,
-#    1.13,
-#    "$z=%3.2f$~\n${\\rm M*}+0\\sigma$\n${\\rm JET}~0\\%%$"
-#    % redshift,
-#    va="top",
-#    ha="left",
-#)
 
 lines = []
 
@@ -389,7 +360,7 @@ l, = ax.plot(bins_k, ratio_simba(bins_k), "-", color='b', lw=0.7, label="${\\rm 
 lines.append(l)
 
 # Plot Horizon-AGN data
-l, = ax.plot(bins_k, ratio_horizon(bins_k), "-", color='c', lw=0.7, label="${\\rm Horizon-AGN}$")
+l, = ax.plot(bins_k, ratio_horizon(bins_k), "-", color='c', lw=0.7, label="${\\rm Horizon\\textnormal{-}AGN}$")
 lines.append(l)
 
 # Plot Illustris data
@@ -397,7 +368,7 @@ l, = ax.plot(bins_k, ratio_illustris(bins_k), "-", color='y', lw=0.7, label="${\
 lines.append(l)
 
 # Plot MTNG data
-l, = ax.plot(mtng_k, mtng_R, "-", color="0.5", lw=0.7, label="${\\rm Millennium-TNG}$")
+l, = ax.plot(mtng_k, mtng_R, "-", color="0.5", lw=0.7, label="${\\rm Millennium\\textnormal{-}TNG}$")
 lines.append(l)
 
 # Plot BAHAMAS data
@@ -426,7 +397,7 @@ for i in range(len(all_cowls_k)):
     
 legend = ax.legend(
     handles=lines,
-    fontsize=7,
+    fontsize=7.5,
     loc="lower left",
     fancybox=True,
     framealpha=0,
@@ -436,6 +407,41 @@ legend = ax.legend(
     handletextpad=0.5,
 )
 legend.get_frame().set_edgecolor("white")
+ax.add_artist(legend)
+
+# Plot the data
+lines = []
+for i in range(len(models)):
+    pred_R, pred_var_R = emulator.predict(
+        bins_k, redshift, models[i][0], models[i][1], models[i][2]
+    )
+    l, = ax.plot(
+        bins_k,
+        pred_R,
+        'o-',
+        ms=2,
+        #ls="-",
+        color=colors_z[i],
+        lw=1,
+        label="${\\rm FLAMINGO:~fgas}%+d\\sigma, M_*+%d\\sigma, {\\rm JET}~%d\\%%$" % (models[i][0], models[i][1], models[i][2]*100),
+    )
+    lines.append(l)
+# Legend and model
+legend = ax.legend(
+    handles=lines,
+    loc="upper left",
+#    loc="lower left",
+#   loc = (0.02, 0.71),
+    fancybox=True,
+    framealpha=1,
+    handlelength=1,
+    ncol=1,
+    fontsize=7.5,
+    columnspacing=0.8,
+    handletextpad=0.5,
+)
+legend.get_frame().set_edgecolor("white")
+
 
 # Extra axis
 ax2 = ax.twiny()
