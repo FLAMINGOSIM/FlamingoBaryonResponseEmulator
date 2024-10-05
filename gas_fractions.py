@@ -36,12 +36,11 @@ params = {
     "xtick.labelsize": 9,
     "ytick.labelsize": 9,
     "text.usetex": True,
-    "figure.figsize": (3.333, 3.333),
+    "figure.figsize": (3.333, 4.00),
     "figure.subplot.left": 0.095,
-    #    "figure.subplot.right": 0.993,
-    "figure.subplot.right": 0.813,
-    "figure.subplot.bottom": 0.102,
-    "figure.subplot.top": 0.995,
+    "figure.subplot.right": 0.993,
+    "figure.subplot.bottom": 0.092,
+    "figure.subplot.top": 0.905,
     "figure.subplot.wspace": 0.0,
     "figure.subplot.hspace": 0.0,
     "lines.markersize": 6,
@@ -85,32 +84,56 @@ for i in range(len(bins)):
     ax.plot(
         data_fb_mean[mask_fid],
         data_sigma[mask_fid],
-        "-",
+        "o-",
         lw=0.9,
+        ms=2,
         color=colors_bins[i],
         label="$10^{%4.2f}$" % bins[i],
     )
     ax.plot(
-        data_fb_mean[mask_jet], data_sigma[mask_jet], "--", lw=0.9, color=colors_bins[i]
+        data_fb_mean[mask_jet], data_sigma[mask_jet], "o--", lw=0.9, ms=2, color=colors_bins[i]
     )
 
-    legend = ax.legend(
-        title="$M_{\\rm 500, cr} / {\\rm M}_\\odot=$",
-        loc="lower right",
-        fancybox=True,
-        framealpha=1,
-        handlelength=0.8,
-        ncol=1,
-        columnspacing=0.8,
-        handletextpad=0.5,
-        bbox_to_anchor=(1.302, 0.2),
-    )
-    legend.get_frame().set_edgecolor("white")
-    legend.get_title().set_fontsize("7")
+ax.text(-0.01, 2.95,
+        "$M_{\\rm 500, cr} / {\\rm M}_\\odot=$",
+        fontsize=7.5, rasterized=False)
+    
+legend = ax.legend(
+    loc="lower left",
+    fancybox=True,
+    framealpha=1,
+    handlelength=0.8,
+    ncol=5,
+    columnspacing=0.8,
+    handletextpad=0.5,
+    bbox_to_anchor=(0.1, 0.99),
+)
+legend.get_frame().set_edgecolor("white")
+legend.get_title().set_fontsize("7")
+ax.add_artist(legend)
+
+(l1,) = ax.plot(
+    [1e5, 1e5], [1, 1], "k-", lw=0.9, label="${\\rm Thermal~feedback}$"
+)
+(l2,) = ax.plot(
+    [1e5, 1e5], [1, 1], "k--", lw=0.9, label="${\\rm Jet~feedback}$"
+)
+legend = ax.legend(
+    handles=[l1, l2],
+    loc="lower center",
+    fancybox=True,
+    framealpha=1,
+    handlelength=1.15,
+    ncol=2,
+    columnspacing=2.0,
+    handletextpad=0.5,
+)
+legend.get_frame().set_edgecolor("white")
+
 
 ax.grid(lw=0.3, color="0.9")
 ax.set_xlim(0.06, 0.82)
-ax.set_ylim(-8.5, 2.5)
+ax.set_ylim(-9.1, 2.3)
 ax.set_xticks([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
 ax.set_xlabel(
     "$f_{\\rm gas}(<R_{500, {\\rm cr}}) / (\\Omega_{\\rm b} / \\Omega_{\\rm m})~[-]$",
@@ -118,5 +141,6 @@ ax.set_xlabel(
 )
 ax.set_ylabel("${\\rm fgas}~N\\sigma$", labelpad=-4)
 # plt.colorbar(sm, ticks=[-1, 0, 1], )
+ax.yaxis.set_label_coords(-0.06, 0.53)
 
 fig.savefig("gas_fractions.png", dpi=200)
