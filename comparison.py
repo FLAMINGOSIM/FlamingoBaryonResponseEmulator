@@ -178,17 +178,19 @@ def ratio_illustris(k):
 
 ############################################
 
-all_bahamas_short_names = ["bahamas_agn7p6", "bahamas_agn8p0"]
+all_bahamas_short_names = ["bahamas_agn7p6", "bahamas_agn7p8",  "bahamas_agn8p0"]
 all_bahamas_labels = [
     "${\\rm BAHAMAS}\\textnormal{-}\\Delta T7.6$",
+    "${\\rm BAHAMAS}\\textnormal{-}\\Delta T7.8$",
     "${\\rm BAHAMAS}\\textnormal{-}\\Delta T8.0$",
 ]
 all_bahamas_fname = [
     "powtable_BAHAMAS_Theat7.6_nu0_WMAP9.dat",
+    "powtable_BAHAMAS_nu0_WMAP9.dat",
     "powtable_BAHAMAS_Theat8.0_nu0_WMAP9.dat",
 ]
-all_bahamas_colors = ['g', 'g']
-all_bahamas_ls = ['-', '--']
+all_bahamas_colors = ['g', 'g', 'g']
+all_bahamas_ls = ['-', '-.', '--']
 all_bahamas_fit = []
 all_bahamas_k = []
 all_bahamas_R = []
@@ -239,10 +241,10 @@ all_cowls_short_names = [
     "cowl_agn8p7"
 ]
 all_cowls_labels = [
-    "${\\rm C\\textnormal{-}OWLS\\textnormal{-}AGN}$",
-    "${\\rm C\\textnormal{-}OWLS\\textnormal{-}AGN}\\textnormal{-}\\Delta T8.3$",
-    "${\\rm C\\textnormal{-}OWLS\\textnormal{-}AGN}\\textnormal{-}\\Delta T8.5$",
-    "${\\rm C\\textnormal{-}OWLS\\textnormal{-}AGN}\\textnormal{-}\\Delta T8.7$",
+    "${\\rm Cosmo\\textnormal{-}OWLS\\textnormal{-}AGN}\\textnormal{-}\\Delta T8.0$",
+    "${\\rm Cosmo\\textnormal{-}OWLS\\textnormal{-}AGN}\\textnormal{-}\\Delta T8.3$",
+    "${\\rm Cosmo\\textnormal{-}OWLS\\textnormal{-}AGN}\\textnormal{-}\\Delta T8.5$",
+    "${\\rm Cosmo\\textnormal{-}OWLS\\textnormal{-}AGN}\\textnormal{-}\\Delta T8.7$",
 ]
 all_cowls_fname = [
     "powtable_C-OWLS_AGN_WMAP7.dat",
@@ -338,7 +340,7 @@ ax.set_yticks([0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1])
 
 
 # Fitting range
-ax.vlines(k_min, 0.885, 100, "k", ls=":", lw=0.7)
+ax.vlines(k_min, 0.905, 100, "k", ls=":", lw=0.7)
 ax.vlines(k_max, 0.66, 100, "k", ls=":", lw=0.7)
 
 ax.text(
@@ -351,20 +353,20 @@ ax.text(
 
 lines = []
 
-# Plot EAGLE data
-l, = ax.plot(bins_k, ratio_eagle(bins_k), "-", color='m', lw=0.7, label="${\\rm EAGLE}$")
-lines.append(l)
-
 # Plot SIMBA data
 l, = ax.plot(bins_k, ratio_simba(bins_k), "-", color='b', lw=0.7, label="${\\rm Simba}$")
 lines.append(l)
 
-# Plot Horizon-AGN data
-l, = ax.plot(bins_k, ratio_horizon(bins_k), "-", color='c', lw=0.7, label="${\\rm Horizon\\textnormal{-}AGN}$")
-lines.append(l)
-
 # Plot Illustris data
 l, = ax.plot(bins_k, ratio_illustris(bins_k), "-", color='y', lw=0.7, label="${\\rm Illustris}$")
+lines.append(l)
+
+# Plot EAGLE data
+l, = ax.plot(bins_k, ratio_eagle(bins_k), "-", color='m', lw=0.7, label="${\\rm EAGLE}$")
+lines.append(l)
+
+# Plot Horizon-AGN data
+l, = ax.plot(bins_k, ratio_horizon(bins_k), "-", color='c', lw=0.7, label="${\\rm Horizon\\textnormal{-}AGN}$")
 lines.append(l)
 
 # Plot MTNG data
