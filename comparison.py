@@ -50,6 +50,17 @@ rc("font", **{"family": "sans-serif", "sans-serif": ["Times"]})
 
 ############################################
 
+data_fable = np.loadtxt("../data_others/fable.txt")
+fable_k = data_fable[:, 0]
+fable_R = data_fable[:, 1]
+
+# Select the range overlapping with the emulator
+mask = fable_k < k_max
+fable_k = fable_k[mask]
+fable_R = fable_R[mask]
+
+############################################
+
 data_mtng = np.loadtxt("../data_others/mtng.txt")
 mtng_k = data_mtng[:, 0]
 mtng_R = data_mtng[:, 1]
@@ -340,7 +351,7 @@ ax.set_yticks([0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1])
 
 
 # Fitting range
-ax.vlines(k_min, 0.905, 100, "k", ls=":", lw=0.7)
+ax.vlines(k_min, 0.927, 100, "k", ls=":", lw=0.7)
 ax.vlines(k_max, 0.66, 100, "k", ls=":", lw=0.7)
 
 ax.text(
@@ -363,6 +374,10 @@ lines.append(l)
 
 # Plot EAGLE data
 l, = ax.plot(bins_k, ratio_eagle(bins_k), "-", color='m', lw=0.7, label="${\\rm EAGLE}$")
+lines.append(l)
+
+# Plot FABLE data
+l, = ax.plot(fable_k, fable_R, "-", color="#d05e13", lw=0.7, label="${\\rm FABLE}$")
 lines.append(l)
 
 # Plot Horizon-AGN data
