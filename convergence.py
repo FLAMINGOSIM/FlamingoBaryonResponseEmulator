@@ -52,12 +52,17 @@ rc("font", **{"family": "sans-serif", "sans-serif": ["Times"]})
 
 ############################################
 
-# boxsizes = [100, 200, 400, 1000, 2800]
-# snap = [0, 0, 0, 122, 122]
+
+# boxsizes = [50, 100, 200, 400, 1000, 2800]
+# snap = [11, 11, 11, 11, 122, 122]
+# inverted = [0, 0, 0, 0, 0, 0]
+# redshift = 0
 
 boxsizes = [50, 100, 200, 400, 1000, 2800]
-snap = [11, 11, 11, 11, 122, 122]
+snap = [7, 7, 7, 7, 102, 102]
 inverted = [0, 0, 0, 0, 0, 0]
+redshift = 1
+
 
 colors_L = cm.plasma(np.linspace(0.0, 0.9, len(boxsizes)))
 
@@ -142,7 +147,7 @@ legend.get_frame().set_edgecolor("white")
 ax.text(
     k_min * 1.2,
     1.13,
-    "$z=%3.2f$" % 0,
+    "$z=%3.2f$" % redshift,
     va="top",
     ha="left",
 )
@@ -156,4 +161,4 @@ ax2.tick_params(axis="x", which="major", pad=1)
 ax2.set_xticks([1, 10.0, 100.0])
 ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 
-fig.savefig("convergence.png", dpi=200)
+fig.savefig("convergence_%d.png"%redshift, dpi=200)
