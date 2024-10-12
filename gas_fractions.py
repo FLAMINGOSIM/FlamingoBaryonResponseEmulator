@@ -95,7 +95,7 @@ for i in range(len(bins)):
     )
 
 ax.text(-0.01, 2.95,
-        "$M_{\\rm 500, cr} / {\\rm M}_\\odot=$",
+        "$M_{\\rm 500c} / {\\rm M}_\\odot=$",
         fontsize=7.5, rasterized=False)
     
 legend = ax.legend(
@@ -136,7 +136,7 @@ ax.set_xlim(0.06, 0.82)
 ax.set_ylim(-9.1, 2.3)
 ax.set_xticks([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
 ax.set_xlabel(
-    "$f_{\\rm gas}(<R_{500, {\\rm cr}}) / (\\Omega_{\\rm b} / \\Omega_{\\rm m})~[-]$",
+    "$f_{\\rm gas}(<R_{500{\\rm c}}) / (\\Omega_{\\rm b} / \\Omega_{\\rm m})~[-]$",
     labelpad=1,
 )
 ax.set_ylabel("${\\rm fgas}~N\\sigma$", labelpad=-4)
