@@ -11,7 +11,10 @@ class FlamingoBaryonResponseEmulator:
 
     min_k: float = -1.5
     max_k: float = 1.5
-    num_bins_k: float = 31
+    delta_bins_k: float
+    k_bins: np.array
+    num_bins_k: int = 31
+
     PS_ratio_emulator: se.GaussianProcessEmulator
 
     def load_emulator(self):
