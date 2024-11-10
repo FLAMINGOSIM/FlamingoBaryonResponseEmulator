@@ -74,7 +74,7 @@ fig, axs = plt.subplots(nrows=2, ncols=1)
 
 ax = axs[0]
 ax.set_xscale("log")
-    
+
 # Reference
 ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
@@ -103,7 +103,7 @@ for i in range(len(boxsizes)):
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.81, 1.03)
-#ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
+# ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
 ax.text(
@@ -139,7 +139,7 @@ redshift = 1
 
 ax = axs[1]
 ax.set_xscale("log")
-    
+
 # Reference
 ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
@@ -165,7 +165,7 @@ for i in range(len(boxsizes)):
 
     ax.plot(k, R, ls=ls, color=colors_L[i], lw=1, label=label)
 
-#Legend and model
+# Legend and model
 legend = ax.legend(
     loc="lower left",
     fancybox=True,

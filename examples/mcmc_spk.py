@@ -68,10 +68,10 @@ emulator = FlamingoBaryonResponseEmulator()
 ############################################
 
 # Load FLAMINGO Mhalo - fb bins
-data = np.loadtxt("./fit_models_%d.txt"%overdensity)
+data = np.loadtxt("./fit_models_%d.txt" % overdensity)
 data_z = data[:, 0]
 data_fgas = data[:, 1]
-data_jet = data[:,2]
+data_jet = data[:, 2]
 data_M500 = data[:, 3]
 data_fb = data[:, 4] / (Omega_b / Omega_m)
 
@@ -119,13 +119,15 @@ for i in range(len(redshifts)):
 
     z = redshifts[i]
     mask = np.logical_and(data_z == z, np.logical_not(np.isnan(data_fb)))
-    mask = np.logical_and(mask, data_jet == 0.)
-    mask = np.logical_and(mask, data_fgas == 0.)
+    mask = np.logical_and(mask, data_jet == 0.0)
+    mask = np.logical_and(mask, data_fgas == 0.0)
 
     print(data_M500[mask])
     print(data_fb[mask])
-    
-    my_k, my_R = spk.sup_model(SO=overdensity, z=z, M_halo=data_M500[mask], fb=data_fb[mask])
+
+    my_k, my_R = spk.sup_model(
+        SO=overdensity, z=z, M_halo=data_M500[mask], fb=data_fb[mask]
+    )
     SPK_k.append(my_k)
     SPK_R.append(my_R)
 
@@ -283,7 +285,13 @@ ax2.tick_params(axis="x", which="major", pad=1)
 ax2.set_xticks([1, 10.0, 100.0])
 ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 ax2.plot([0.1, 0.1], [10, 10], "k-", lw=0.9, label="${\\rm FLAMINGO~emul.}$")
-ax2.plot([0.1, 0.1], [10, 10], "k--", lw=0.9, label="${\\rm SP}(k)~{\\rm using}~M_{%d{\\rm c}}$"%overdensity)
+ax2.plot(
+    [0.1, 0.1],
+    [10, 10],
+    "k--",
+    lw=0.9,
+    label="${\\rm SP}(k)~{\\rm using}~M_{%d{\\rm c}}$" % overdensity,
+)
 legend = ax2.legend(
     loc="lower right",
     fancybox=True,
@@ -296,4 +304,4 @@ legend = ax2.legend(
 legend.get_frame().set_edgecolor("white")
 
 
-fig.savefig("comparisons_SPK_M%d.png"%overdensity, dpi=200)
+fig.savefig("comparisons_SPK_M%d.png" % overdensity, dpi=200)

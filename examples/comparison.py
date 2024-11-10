@@ -98,9 +98,11 @@ eagle_dmo_P = eagle_dmo_P[mask]
 
 eagle_R = eagle_P / eagle_dmo_P
 
+
 def ratio_eagle(k):
     interpolator = inter.CubicSpline(np.log10(eagle_k), eagle_R)
     return interpolator(np.log10(k))
+
 
 ############################################
 
@@ -125,9 +127,11 @@ horizon_dmo_P = horizon_dmo_P[mask]
 
 horizon_R = horizon_P / horizon_dmo_P
 
+
 def ratio_horizon(k):
     interpolator = inter.CubicSpline(np.log10(horizon_k), horizon_R)
     return interpolator(np.log10(k))
+
 
 ############################################
 
@@ -152,9 +156,11 @@ simba_dmo_P = simba_dmo_P[mask]
 
 simba_R = simba_P / simba_dmo_P
 
+
 def ratio_simba(k):
     interpolator = inter.CubicSpline(np.log10(simba_k), simba_R)
     return interpolator(np.log10(k))
+
 
 ############################################
 
@@ -179,17 +185,19 @@ illustris_dmo_P = illustris_dmo_P[mask]
 
 illustris_R = illustris_P / illustris_dmo_P
 
-illustris_R[illustris_k < 1e-1] = 1.
+illustris_R[illustris_k < 1e-1] = 1.0
+
 
 def ratio_illustris(k):
     interpolator = inter.CubicSpline(np.log10(illustris_k), illustris_R)
     R = interpolator(np.log10(k))
-    R[k < 1e-1] = 1.
+    R[k < 1e-1] = 1.0
     return R
+
 
 ############################################
 
-all_bahamas_short_names = ["bahamas_agn7p6", "bahamas_agn7p8",  "bahamas_agn8p0"]
+all_bahamas_short_names = ["bahamas_agn7p6", "bahamas_agn7p8", "bahamas_agn8p0"]
 all_bahamas_labels = [
     "${\\rm BAHAMAS}\\textnormal{-}\\Delta T7.6$",
     "${\\rm BAHAMAS}\\textnormal{-}\\Delta T7.8$",
@@ -200,8 +208,8 @@ all_bahamas_fname = [
     "powtable_BAHAMAS_nu0_WMAP9.dat",
     "powtable_BAHAMAS_Theat8.0_nu0_WMAP9.dat",
 ]
-all_bahamas_colors = ['g', 'g', 'g']
-all_bahamas_ls = ['-', '-.', '--']
+all_bahamas_colors = ["g", "g", "g"]
+all_bahamas_ls = ["-", "-.", "--"]
 all_bahamas_fit = []
 all_bahamas_k = []
 all_bahamas_R = []
@@ -243,14 +251,10 @@ def ratio_bahamas(k, i):
     interpolator = inter.CubicSpline(np.log10(all_bahamas_k[i]), all_bahamas_R[i])
     return interpolator(np.log10(k))
 
+
 ############################################
 
-all_cowls_short_names = [
-    "cowl_agn",
-    "cowl_agn8p3",
-    "cowl_agn8p5",
-    "cowl_agn8p7"
-]
+all_cowls_short_names = ["cowl_agn", "cowl_agn8p3", "cowl_agn8p5", "cowl_agn8p7"]
 all_cowls_labels = [
     "${\\rm Cosmo\\textnormal{-}OWLS\\textnormal{-}AGN}\\textnormal{-}\\Delta T8.0$",
     "${\\rm Cosmo\\textnormal{-}OWLS\\textnormal{-}AGN}\\textnormal{-}\\Delta T8.3$",
@@ -263,8 +267,8 @@ all_cowls_fname = [
     "powtable_C-OWLS_AGN_Theat8.5_WMAP7.dat",
     "powtable_C-OWLS_AGN_Theat8.7_WMAP7.dat",
 ]
-all_cowls_colors = ['r', 'r', 'r', 'r']
-all_cowls_ls = ['-', '-.', '--', ':']
+all_cowls_colors = ["r", "r", "r", "r"]
+all_cowls_ls = ["-", "-.", "--", ":"]
 all_cowls_fit = []
 all_cowls_k = []
 all_cowls_R = []
@@ -347,7 +351,7 @@ ax.set_ylim(0.62, 1.14)
 ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 ax.set_yticks([0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1])
-#ax.set_yticklabels(["$1$", "$10$", "$100$"])
+# ax.set_yticklabels(["$1$", "$10$", "$100$"])
 
 
 # Fitting range
@@ -365,35 +369,55 @@ ax.text(
 lines = []
 
 # Plot SIMBA data
-l, = ax.plot(bins_k, ratio_simba(bins_k), "-", color='b', lw=0.7, label="${\\rm Simba}$")
+(l,) = ax.plot(
+    bins_k, ratio_simba(bins_k), "-", color="b", lw=0.7, label="${\\rm Simba}$"
+)
 lines.append(l)
 
 # Plot Illustris data
-l, = ax.plot(bins_k, ratio_illustris(bins_k), "-", color='y', lw=0.7, label="${\\rm Illustris}$")
+(l,) = ax.plot(
+    bins_k, ratio_illustris(bins_k), "-", color="y", lw=0.7, label="${\\rm Illustris}$"
+)
 lines.append(l)
 
 # Plot EAGLE data
-l, = ax.plot(bins_k, ratio_eagle(bins_k), "-", color='m', lw=0.7, label="${\\rm EAGLE}$")
+(l,) = ax.plot(
+    bins_k, ratio_eagle(bins_k), "-", color="m", lw=0.7, label="${\\rm EAGLE}$"
+)
 lines.append(l)
 
 # Plot FABLE data
-l, = ax.plot(fable_k, fable_R, "-", color="#d05e13", lw=0.7, label="${\\rm FABLE}$")
+(l,) = ax.plot(fable_k, fable_R, "-", color="#d05e13", lw=0.7, label="${\\rm FABLE}$")
 lines.append(l)
 
 # Plot Horizon-AGN data
-l, = ax.plot(bins_k, ratio_horizon(bins_k), "-", color='c', lw=0.7, label="${\\rm Horizon\\textnormal{-}AGN}$")
+(l,) = ax.plot(
+    bins_k,
+    ratio_horizon(bins_k),
+    "-",
+    color="c",
+    lw=0.7,
+    label="${\\rm Horizon\\textnormal{-}AGN}$",
+)
 lines.append(l)
 
 # Plot MTNG data
-l, = ax.plot(mtng_k, mtng_R, "-", color="0.5", lw=0.7, label="${\\rm Millennium\\textnormal{-}TNG}$")
+(l,) = ax.plot(
+    mtng_k,
+    mtng_R,
+    "-",
+    color="0.5",
+    lw=0.7,
+    label="${\\rm Millennium\\textnormal{-}TNG}$",
+)
 lines.append(l)
 
 # Plot BAHAMAS data
 for i in range(len(all_bahamas_k)):
-    l,= ax.plot(
+    (l,) = ax.plot(
         bins_k,
         ratio_bahamas(bins_k, i),
-        ls = all_bahamas_ls[i],
+        ls=all_bahamas_ls[i],
         color=all_bahamas_colors[i],
         lw=0.7,
         label=all_bahamas_labels[i],
@@ -402,16 +426,16 @@ for i in range(len(all_bahamas_k)):
 
 # Plot C-OWLS data
 for i in range(len(all_cowls_k)):
-    l, = ax.plot(
+    (l,) = ax.plot(
         bins_k,
         ratio_cowls(bins_k, i),
-        ls = all_cowls_ls[i],
+        ls=all_cowls_ls[i],
         color=all_cowls_colors[i],
         lw=0.7,
         label=all_cowls_labels[i],
-    )    
+    )
     lines.append(l)
-    
+
 legend = ax.legend(
     handles=lines,
     fontsize=7.5,
@@ -432,23 +456,24 @@ for i in range(len(models)):
     pred_R, pred_var_R = emulator.predict(
         bins_k, redshift, models[i][0], models[i][1], models[i][2]
     )
-    l, = ax.plot(
+    (l,) = ax.plot(
         bins_k,
         pred_R,
-        'o-',
+        "o-",
         ms=2,
-        #ls="-",
+        # ls="-",
         color=colors_z[i],
         lw=1,
-        label="${\\rm FLAMINGO:~fgas}%+d\\sigma, M_*+%d\\sigma, {\\rm JET}~%d\\%%$" % (models[i][0], models[i][1], models[i][2]*100),
+        label="${\\rm FLAMINGO:~fgas}%+d\\sigma, M_*+%d\\sigma, {\\rm JET}~%d\\%%$"
+        % (models[i][0], models[i][1], models[i][2] * 100),
     )
     lines.append(l)
 # Legend and model
 legend = ax.legend(
     handles=lines,
     loc="upper left",
-#    loc="lower left",
-#   loc = (0.02, 0.71),
+    #    loc="lower left",
+    #   loc = (0.02, 0.71),
     fancybox=True,
     framealpha=1,
     handlelength=1,

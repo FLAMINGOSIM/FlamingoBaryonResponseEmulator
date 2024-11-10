@@ -58,10 +58,10 @@ snap = [11, 11, 11, 11, 122, 122]
 inverted = [0, 0, 0, 0, 0, 0]
 redshift = 0
 
-#boxsizes = [400, 1000, 2800]
-#snap = [11, 122, 122]
-#inverted = [0, 0, 0]
-#redshift = 0
+# boxsizes = [400, 1000, 2800]
+# snap = [11, 122, 122]
+# inverted = [0, 0, 0]
+# redshift = 0
 
 colors_L = cm.plasma(np.linspace(0.0, 0.9, len(boxsizes)))
 
@@ -71,13 +71,13 @@ for i in range(len(inverted)):
 
 k_ref = []
 R_ref = []
-        
+
 # ---------------------------
-fig, axs = plt.subplots(nrows=2, ncols=2, height_ratios=[3.5,1])
+fig, axs = plt.subplots(nrows=2, ncols=2, height_ratios=[3.5, 1])
 
 ax = axs[0][0]
 ax.set_xscale("log")
-    
+
 # Reference
 ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
@@ -106,14 +106,14 @@ for i in range(len(boxsizes)):
     if boxsizes[i] == 2800:
         k_ref = k
         R_ref = R
-    
+
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.81, 1.03)
-#ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
+# ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$R(k) = P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
-#Legend and model
+# Legend and model
 legend = ax.legend(
     loc="lower left",
     fancybox=True,
@@ -155,11 +155,12 @@ def ratio_ref(k):
     interpolator = inter.CubicSpline(np.log10(k_ref), R_ref)
     return interpolator(np.log10(k))
 
+
 ax = axs[1][0]
 ax.set_xscale("log")
 
 # Reference
-#ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
+# ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 ax.fill_between(
     bins_k,
     np.ones(np.size(bins_k[0])) * 0.99,
@@ -193,9 +194,9 @@ for i in range(len(boxsizes)):
         ls = "--"
         label += " $({\\rm inverted})$"
 
-    ax.plot(k, R/ratio_ref(k), ls=ls, color=colors_L[i], lw=1, label=label)
+    ax.plot(k, R / ratio_ref(k), ls=ls, color=colors_L[i], lw=1, label=label)
 
-        
+
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.968, 1.032)
@@ -212,15 +213,15 @@ snap = [7, 7, 7, 7, 102, 102]
 inverted = [0, 0, 0, 0, 0, 0]
 redshift = 1
 
-#boxsizes = [400, 1000, 2800]
-#snap = [7, 102, 102]
-#inverted = [0, 0, 0]
-#redshift = 1
+# boxsizes = [400, 1000, 2800]
+# snap = [7, 102, 102]
+# inverted = [0, 0, 0]
+# redshift = 1
 
 
 ax = axs[0][1]
 ax.set_xscale("log")
-    
+
 # Reference
 ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
@@ -248,8 +249,8 @@ for i in range(len(boxsizes)):
     if boxsizes[i] == 2800:
         k_ref = k
         R_ref = R
-    
-#Legend and model
+
+# Legend and model
 legend = ax.legend(
     loc="lower left",
     fancybox=True,
@@ -271,9 +272,9 @@ ax.text(
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
 ax.set_ylim(0.81, 1.03)
-#ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
+# ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$R(k) = P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
-#ax.set_yticklabels("")
+# ax.set_yticklabels("")
 
 # Extra axis
 ax2 = ax.twiny()
@@ -291,7 +292,7 @@ ax = axs[1][1]
 ax.set_xscale("log")
 
 # Reference
-#ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
+# ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 ax.fill_between(
     bins_k,
     np.ones(np.size(bins_k[0])) * 0.99,
@@ -325,7 +326,7 @@ for i in range(len(boxsizes)):
         ls = "--"
         label += " $({\\rm inverted})$"
 
-    ax.plot(k, R/ratio_ref(k), ls=ls, color=colors_L[i], lw=1, label=label)
+    ax.plot(k, R / ratio_ref(k), ls=ls, color=colors_L[i], lw=1, label=label)
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
