@@ -8,22 +8,23 @@ import attr
 
 # @attr.s
 class FlamingoBaryonResponseEmulator:
+    """
+    Emulator for the baryon response of the matter power spectrum in
+    the FLAMINGO simulations.
+
+    """
 
     min_k: float = -1.5
     max_k: float = 1.5
     delta_bins_k: float
     k_bins: np.array
     num_bins_k: int = 31
-
     PS_ratio_emulator: se.GaussianProcessEmulator
 
     def load_emulator(self):
         """
         Loads the emulator parameters from the compressed
         pickle file
-
-        Parameters
-        ----------
 
         """
 
