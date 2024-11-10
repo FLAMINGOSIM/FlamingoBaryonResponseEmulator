@@ -33,12 +33,12 @@ params = {
     "xtick.labelsize": 9,
     "ytick.labelsize": 9,
     "text.usetex": True,
-    "figure.figsize": (3.3333, 4.0),
-    "figure.subplot.left": 0.135,
-    "figure.subplot.right": 0.993,
-    "figure.subplot.bottom": 0.09,
-    "figure.subplot.top": 0.92,
-    "figure.subplot.wspace": 0.0,
+    "figure.figsize": (7.111, 3.5333),
+    "figure.subplot.left": 0.066,
+    "figure.subplot.right": 0.997,
+    "figure.subplot.bottom": 0.102,
+    "figure.subplot.top": 0.91,
+    "figure.subplot.wspace": 0.185,
     "figure.subplot.hspace": 0.0,
     "lines.markersize": 6,
     "lines.linewidth": 1.5,
@@ -181,9 +181,10 @@ import make_training_data as train
 
 
 # ---------------------------
-fig, axs = plt.subplots(nrows=1, ncols=1)
+fig, axs = plt.subplots(nrows=1, ncols=2)
 
-ax = axs
+# ---------------------------
+ax = axs[0]
 ax.set_xscale("log")
 
 # Reference
@@ -192,22 +193,22 @@ lines = []
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
-ax.set_ylim(0.62, 1.14)
+ax.set_ylim(0.67, 1.12)
 ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
-ax.set_yticks([0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1])
+ax.set_yticks([0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1])
 #ax.set_yticklabels(["$1$", "$10$", "$100$"])
 
 
 # Fitting range
-ax.vlines(k_min, 0.905, 100, "k", ls=":", lw=0.7)
+ax.vlines(k_min, 0.73, 100, "k", ls=":", lw=0.7)
 ax.vlines(k_max, 0.66, 100, "k", ls=":", lw=0.7)
 
 ax.text(
-    k_max_plot * 0.7,
-    0.63,
+    k_max_plot * 0.77,
+    1.10,
     "$z=0$",
-    va="bottom",
+    va="top",
     ha="right",
 )
 
@@ -223,12 +224,153 @@ l, = ax.plot(bins_k_Arico, (Arico_high_plot + Arico_low_plot) / 2., "-", color="
 lines.append(l)
 
 # Plot Amon+22 data
+# Amon_high_plot = ratio_Amon_high(bins_k_data)
+# Amon_low_plot = ratio_Amon_low(bins_k_data)
+# Amon_high_plot[Amon_high_plot > 1] = 1
+# Amon_low_plot[Amon_low_plot > 1] = 1
+# ax.fill_between(bins_k_data, Amon_low_plot, Amon_high_plot, color="y", alpha=0.2)
+# l, = ax.plot(Amon_mean_k, Amon_mean_R, "-", color="y", lw=0.7, label="${\\rm Amon+22~(KiDS~WL+CMB)}$")
+# #Amon_mean_plot = 0.5 * (Amon_high_plot + Amon_low_plot)
+# #l = ax.errorbar(bins_k_data,  Amon_mean_plot, yerr=[Amon_high_plot-Amon_mean_plot, Amon_mean_plot - Amon_low_plot], color="y", alpha=0.8, ls='', lw=1)
+# lines.append(l)
+
+# Plot Preston+23 data
+# Preston_high_plot = ratio_Preston_high(bins_k_data)
+# Preston_low_plot = ratio_Preston_low(bins_k_data)
+# Preston_high_plot[Preston_high_plot > 1] = 1
+# Preston_low_plot[Preston_low_plot > 1] = 1
+# ax.fill_between(bins_k_data, Preston_low_plot, Preston_high_plot, color="m", alpha=0.2)
+# l, = ax.plot(Preston_k, Preston_R, "-", color="m", lw=0.7, label="${\\rm Preston+23~(DES~WL+CMB)}$")
+# lines.append(l)
+
+# # Plot Bigwood+23 WL + kSZ data
+Bigwood_high_plot = ratio_Bigwood_high(bins_k_Arico)
+Bigwood_low_plot = ratio_Bigwood_low(bins_k_Arico)
+Bigwood_high_plot[Bigwood_high_plot > 1] = 1
+Bigwood_low_plot[Bigwood_low_plot > 1] = 1
+ax.fill_between(bins_k_Arico, Bigwood_low_plot, Bigwood_high_plot, color="y", alpha=0.2)
+l, = ax.plot(Bigwood_mean_k, Bigwood_mean_R, "-", color="y", lw=0.7, label="${\\rm Bigwood+24~(DES~WL)}$")
+lines.append(l)
+
+# # Plot Bigwood+23 WL + kSZ data
+# BigwoodkSZ_high_plot = ratio_BigwoodkSZ_high(bins_k_Arico)
+# BigwoodkSZ_low_plot = ratio_BigwoodkSZ_low(bins_k_Arico)
+# BigwoodkSZ_high_plot[BigwoodkSZ_high_plot > 1] = 1
+# BigwoodkSZ_low_plot[BigwoodkSZ_low_plot > 1] = 1
+# ax.fill_between(bins_k_Arico, BigwoodkSZ_low_plot, BigwoodkSZ_high_plot, color="g", alpha=0.2)
+# l, = ax.plot(BigwoodkSZ_mean_k, BigwoodkSZ_mean_R, "-", color="g", lw=0.7, label="${\\rm Bigwood+24~(DES~WL+ACT~kSZ)}$")
+# lines.append(l)
+
+legend = ax.legend(
+    handles=lines,
+    fontsize=7.5,
+    loc="lower left",
+    fancybox=True,
+    framealpha=0,
+    handlelength=1.5,
+    ncol=1,
+    columnspacing=0.8,
+    handletextpad=0.5,
+)
+legend.get_frame().set_edgecolor("white")
+ax.add_artist(legend)
+
+# Plot the data
+lines = []
+for i in range(len(models)):
+    pred_R, pred_var_R = emulator.predict(
+        bins_k, redshift, models[i][0], models[i][1], models[i][2]
+    )
+    l, = ax.plot(
+        bins_k,
+        pred_R,
+        'o-',
+        ms=2,
+        #ls="-",
+        color=colors_z[i],
+        lw=1,
+        label="${\\rm FLAMINGO:~fgas}%+d\\sigma, M_*+%d\\sigma, {\\rm JET}~%d\\%%$" % (models[i][0], models[i][1], models[i][2]*100),
+    )
+    lines.append(l)
+# Legend and model
+legend = ax.legend(
+    handles=lines,
+    loc="upper left",
+#    loc="lower left",
+#   loc = (0.02, 0.71),
+    fancybox=True,
+    framealpha=1,
+    handlelength=1,
+    ncol=1,
+    fontsize=7.5,
+    columnspacing=0.8,
+    handletextpad=0.5,
+)
+legend.get_frame().set_edgecolor("white")
+
+
+# Extra axis
+ax2 = ax.twiny()
+ax2.set_xscale("log")
+ax2.set_xlim(2.0 * math.pi / k_min_plot / h, 2.0 * math.pi / k_max / h)
+ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
+ax2.tick_params(axis="x", which="major", pad=1)
+ax2.set_xticks([1, 10.0, 100.0])
+ax2.set_xticklabels(["$1$", "$10$", "$100$"])
+
+
+
+# ---------------------------
+ax = axs[1]
+ax.set_xscale("log")
+
+# Reference
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
+lines = []
+
+# Plot range
+ax.set_xlim(k_min_plot, k_max_plot)
+ax.set_ylim(0.67, 1.12)
+ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
+ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
+ax.set_yticks([0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1])
+#ax.set_yticklabels(["$1$", "$10$", "$100$"])
+
+
+# Fitting range
+ax.vlines(k_min, 0.76, 100, "k", ls=":", lw=0.7)
+ax.vlines(k_max, 0.66, 100, "k", ls=":", lw=0.7)
+
+ax.text(
+    k_max_plot * 0.77,
+    1.10,
+    "$z=0$",
+    va="top",
+    ha="right",
+)
+
+lines = []
+
+lines = []
+
+# Plot Arico+23 data
+# Arico_high_plot = ratio_Arico_high(bins_k_Arico)
+# Arico_low_plot = ratio_Arico_low(bins_k_Arico)
+# Arico_high_plot[Arico_high_plot > 1] = 1
+# Arico_low_plot[Arico_low_plot > 1] = 1
+# ax.fill_between(bins_k_Arico, Arico_low_plot, Arico_high_plot, color="c", alpha=0.3)
+# l, = ax.plot(bins_k_Arico, (Arico_high_plot + Arico_low_plot) / 2., "-", color="c", lw=0.7, label="${\\rm Arico+23~(DES~WL)}$")
+# lines.append(l)
+
+# Plot Amon+22 data
 Amon_high_plot = ratio_Amon_high(bins_k_data)
 Amon_low_plot = ratio_Amon_low(bins_k_data)
 Amon_high_plot[Amon_high_plot > 1] = 1
 Amon_low_plot[Amon_low_plot > 1] = 1
-ax.fill_between(bins_k_data, Amon_low_plot, Amon_high_plot, color="y", alpha=0.2)
-l, = ax.plot(Amon_mean_k, Amon_mean_R, "-", color="y", lw=0.7, label="${\\rm Amon+22~(KiDS~WL+CMB)}$")
+ax.fill_between(bins_k_data, Amon_low_plot, Amon_high_plot, color="b", alpha=0.2)
+l, = ax.plot(Amon_mean_k, Amon_mean_R, "-", color="b", lw=0.7, label="${\\rm Amon+22~(KiDS~WL+CMB)}$")
+#Amon_mean_plot = 0.5 * (Amon_high_plot + Amon_low_plot)
+#l = ax.errorbar(bins_k_data,  Amon_mean_plot, yerr=[Amon_high_plot-Amon_mean_plot, Amon_mean_plot - Amon_low_plot], color="y", alpha=0.8, ls='', lw=1)
 lines.append(l)
 
 # Plot Preston+23 data
@@ -240,21 +382,21 @@ ax.fill_between(bins_k_data, Preston_low_plot, Preston_high_plot, color="m", alp
 l, = ax.plot(Preston_k, Preston_R, "-", color="m", lw=0.7, label="${\\rm Preston+23~(DES~WL+CMB)}$")
 lines.append(l)
 
-# Plot Bigwood+23 WL + kSZ data
-Bigwood_high_plot = ratio_Bigwood_high(bins_k_Arico)
-Bigwood_low_plot = ratio_Bigwood_low(bins_k_Arico)
-Bigwood_high_plot[Bigwood_high_plot > 1] = 1
-Bigwood_low_plot[Bigwood_low_plot > 1] = 1
-ax.fill_between(bins_k_Arico, Bigwood_low_plot, Bigwood_high_plot, color="b", alpha=0.2)
-l, = ax.plot(Bigwood_mean_k, Bigwood_mean_R, "-", color="b", lw=0.7, label="${\\rm Bigwood+24~(DES~WL)}$")
-lines.append(l)
+# # Plot Bigwood+23 WL
+# Bigwood_high_plot = ratio_Bigwood_high(bins_k_Arico)
+# Bigwood_low_plot = ratio_Bigwood_low(bins_k_Arico)
+# Bigwood_high_plot[Bigwood_high_plot > 1] = 1
+# Bigwood_low_plot[Bigwood_low_plot > 1] = 1
+# ax.fill_between(bins_k_Arico, Bigwood_low_plot, Bigwood_high_plot, color="b", alpha=0.2)
+# l, = ax.plot(Bigwood_mean_k, Bigwood_mean_R, "-", color="b", lw=0.7, label="${\\rm Bigwood+24~(DES~WL)}$")
+# lines.append(l)
 
-# Plot Bigwood+23 WL + kSZ data
+# # Plot Bigwood+23 WL + kSZ data
 BigwoodkSZ_high_plot = ratio_BigwoodkSZ_high(bins_k_Arico)
 BigwoodkSZ_low_plot = ratio_BigwoodkSZ_low(bins_k_Arico)
 BigwoodkSZ_high_plot[BigwoodkSZ_high_plot > 1] = 1
 BigwoodkSZ_low_plot[BigwoodkSZ_low_plot > 1] = 1
-ax.fill_between(bins_k_Arico, BigwoodkSZ_low_plot, BigwoodkSZ_high_plot, color="g", alpha=0.2)
+ax.fill_between(bins_k_Arico, BigwoodkSZ_low_plot, BigwoodkSZ_high_plot, color="g", alpha=0.4)
 l, = ax.plot(BigwoodkSZ_mean_k, BigwoodkSZ_mean_R, "-", color="g", lw=0.7, label="${\\rm Bigwood+24~(DES~WL+ACT~kSZ)}$")
 lines.append(l)
 
@@ -315,4 +457,5 @@ ax2.tick_params(axis="x", which="major", pad=1)
 ax2.set_xticks([1, 10.0, 100.0])
 ax2.set_xticklabels(["$1$", "$10$", "$100$"])
 
-fig.savefig("comparison_S8.png", dpi=200)
+
+fig.savefig("comparisons_S8.png", dpi=200)

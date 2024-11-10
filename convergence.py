@@ -58,11 +58,10 @@ rc("font", **{"family": "sans-serif", "sans-serif": ["Times"]})
 # inverted = [0, 0, 0, 0, 0, 0]
 # redshift = 0
 
-boxsizes = [50, 100, 200, 400, 1000, 2800]
-snap = [7, 7, 7, 7, 102, 102]
-inverted = [0, 0, 0, 0, 0, 0]
-redshift = 1
-
+boxsizes = [400, 1000, 2800]
+snap = [11, 122, 122]
+inverted = [0, 0, 0]
+redshift = 0
 
 colors_L = cm.plasma(np.linspace(0.0, 0.9, len(boxsizes)))
 
@@ -71,19 +70,16 @@ for i in range(len(inverted)):
         colors_L = np.insert(colors_L, i, colors_L[i - 1], axis=0)
 
 # ---------------------------
-fig, axs = plt.subplots(nrows=1, ncols=1)
+fig, axs = plt.subplots(nrows=2, ncols=1)
 
-ax = axs
+ax = axs[0]
 ax.set_xscale("log")
-
+    
 # Reference
 ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
 
 # Plot the data
 for i in range(len(boxsizes)):
-
-    # if boxsizes[i] == 50 or boxsizes[i] == 200 or boxsizes[i] == 2800:
-    #    continue
 
     if inverted[i]:
         filename = "../data_%04d/HYDRO_FIDUCIAL_INVERTED/ratio_%04d.txt" % (
@@ -104,36 +100,72 @@ for i in range(len(boxsizes)):
 
     ax.plot(k, R, ls=ls, color=colors_L[i], lw=1, label=label)
 
-    # pred_R, pred_var_R = emulator.predict(
-    #     bins_k, redshift, models[i][0], models[i][1], models[i][2]
-    # )
-
-    # index = training.get_index_flamingo_arrays(models[i][0], models[i][1], models[i][2])
-    # label = training.FLAMINGO_labels[index]
-    # color = training.FLAMINGO_colors[index]
-
-    # ax.plot(
-    #     bins_k,
-    #     pred_R,
-    #     ls="-",
-    #     color=color,
-    #     lw=1,
-    #     label=label,
-    # )
-
-# ax.plot(bins_k, data_R, ls="-", color=color, lw=1, label=label)
-
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
-ax.set_ylim(0.72, 1.14)
-ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
+ax.set_ylim(0.81, 1.03)
+#ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
 ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
-# Fitting range
-# ax.vlines(k_min, -100, 100, "k", ls=":", lw=0.7)
-# ax.vlines(k_max, -100, 100, "k", ls=":", lw=0.7)
+ax.text(
+    k_max_plot * 0.9,
+    0.82,
+    "$z=%3.2f$" % redshift,
+    va="bottom",
+    ha="right",
+)
 
-# Legend and model
+# Extra axis
+ax2 = ax.twiny()
+ax2.set_xscale("log")
+ax2.set_xlim(2.0 * math.pi / k_min_plot / h, 2.0 * math.pi / k_max_plot / h)
+ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
+ax2.tick_params(axis="x", which="major", pad=1)
+ax2.set_xticks([1, 10.0, 100.0])
+ax2.set_xticklabels(["$1$", "$10$", "$100$"])
+
+
+# ---------------------------
+
+# boxsizes = [50, 100, 200, 400, 1000, 2800]
+# snap = [7, 7, 7, 7, 102, 102]
+# inverted = [0, 0, 0, 0, 0, 0]
+# redshift = 1
+
+boxsizes = [400, 1000, 2800]
+snap = [7, 102, 102]
+inverted = [0, 0, 0]
+redshift = 1
+
+
+ax = axs[1]
+ax.set_xscale("log")
+    
+# Reference
+ax.hlines(1, 1e-4, 1e4, ls="-", color="k", lw=0.7)
+
+# Plot the data
+for i in range(len(boxsizes)):
+
+    if inverted[i]:
+        filename = "../data_%04d/HYDRO_FIDUCIAL_INVERTED/ratio_%04d.txt" % (
+            boxsizes[i],
+            snap[i],
+        )
+    else:
+        filename = "../data_%04d/HYDRO_FIDUCIAL/ratio_%04d.txt" % (boxsizes[i], snap[i])
+    data = np.loadtxt(filename)
+    k = data[:, 0]
+    R = data[:, 1]
+
+    ls = "-"
+    label = "$L=%d~{\\rm Mpc}$" % boxsizes[i]
+    if inverted[i]:
+        ls = "--"
+        label += " $({\\rm inverted})$"
+
+    ax.plot(k, R, ls=ls, color=colors_L[i], lw=1, label=label)
+
+#Legend and model
 legend = ax.legend(
     loc="lower left",
     fancybox=True,
@@ -145,20 +177,17 @@ legend = ax.legend(
 )
 legend.get_frame().set_edgecolor("white")
 ax.text(
-    k_min * 1.2,
-    1.13,
+    k_max_plot * 0.9,
+    0.82,
     "$z=%3.2f$" % redshift,
-    va="top",
-    ha="left",
+    va="bottom",
+    ha="right",
 )
 
-# Extra axis
-ax2 = twiny()
-ax2.set_xscale("log")
-ax2.set_xlim(2.0 * math.pi / k_min_plot / h, 2.0 * math.pi / k_max_plot / h)
-ax2.set_xlabel("${\\rm Wavelength}~\\lambda~[{\\rm{Mpc}}]$", labelpad=4)
-ax2.tick_params(axis="x", which="major", pad=1)
-ax2.set_xticks([1, 10.0, 100.0])
-ax2.set_xticklabels(["$1$", "$10$", "$100$"])
+# Plot range
+ax.set_xlim(k_min_plot, k_max_plot)
+ax.set_ylim(0.81, 1.03)
+ax.set_xlabel("${\\rm Mode}~k~[h\\cdot {\\rm Mpc}^{-1}]$", labelpad=0)
+ax.set_ylabel("$P(k) / P_{\\rm DMO}(k)~[-]$", labelpad=2)
 
-fig.savefig("convergence_%d.png"%redshift, dpi=200)
+fig.savefig("convergence_both.png", dpi=200)
