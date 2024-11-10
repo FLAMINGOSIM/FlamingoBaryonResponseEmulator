@@ -1,24 +1,35 @@
 import numpy as np
 from scipy import interpolate as inter
-
-# from numba import jit
-import swiftemulator as se
+import swiftemulator.emulators.gaussian_process as se
 import pickle
 import lzma
+import attr
 
 
+# @attr.s
 class FlamingoBaryonResponseEmulator:
 
-    min_k = -1.5
-    max_k = 1.5
-    num_bins_k = 31
+    min_k: float = -1.5
+    max_k: float = 1.5
+    num_bins_k: float = 31
+    PS_ratio_emulator: se.GaussianProcessEmulator
 
-    # Load the emulator
     def load_emulator(self):
+        """
+        Loads the emulator parameters from the compressed
+        pickle file
+
+        Parameters
+        ----------
+
+        """
+
         with lzma.open("data/emulator.xz", "r") as f:
             self.PS_ratio_emulator = pickle.load(f)
 
-    def predict(self, k_, z, sigma_gas, sigma_star, jet):
+    def predict(
+        self, k_: np.array, z: float, sigma_gas: float, sigma_star: float, jet: float
+    ):
 
         # Construct parameters in emulator space.
         predictparams = {
@@ -44,7 +55,9 @@ class FlamingoBaryonResponseEmulator:
 
         return ret_ratio
 
-    def predict_with_variance(self, k_, z, sigma_gas, sigma_star, jet):
+    def predict_with_variance(
+        self, k_: np.array, z: float, sigma_gas: float, sigma_star: float, jet: float
+    ):
 
         # Construct parameters in emulator space.
         predictparams = {
