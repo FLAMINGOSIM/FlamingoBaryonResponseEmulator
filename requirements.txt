@@ -1,0 +1,6 @@
+numpy
+scipy
+swiftemulator
+george
+pickle
+lzma

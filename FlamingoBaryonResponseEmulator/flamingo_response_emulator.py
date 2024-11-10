@@ -5,8 +5,6 @@ from scipy import interpolate as inter
 import swiftemulator as se
 import pickle
 import lzma
-import time
-
 
 class FlamingoBaryonResponseEmulator:
 
