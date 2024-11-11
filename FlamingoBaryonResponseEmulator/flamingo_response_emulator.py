@@ -50,10 +50,20 @@ class FlamingoBaryonResponseEmulator:
             The value has to be between 0 and 2.
 
         sigma_gas: float
+            The offset in numbers of sigma (of the X-ray data) the gas fraction
+            in groups and clusters should be from the data used in the calibration
+            of the FLAMINGO model. The emulator was trained between -8 and +2
+            for a jet fraction of 0% and between -4 and 0 for a jet fraction of 100%.
 
-        sigma_far: float
+        sigma_star: float
+            The offset in numbers of sigma (of the data) the stellar mass function
+            should be from the data used in the calibration of the FLAMINGO model.
+            The emulator was trained between -1 and 0.
 
         jet: float
+            The fraction of the AGN energy released in the form of collimated jets
+            (between 0 and 1). The original simulations exist only as purely thermal
+            AGN (i.e. with jet = 0) and with purely collimated jets (i.e. with jet = 1).
 
         Returns
         -------
@@ -102,6 +112,55 @@ class FlamingoBaryonResponseEmulator:
     def predict_with_variance(
         self, k: np.array, z: float, sigma_gas: float, sigma_star: float, jet: float
     ):
+        """
+        Returns the predicted baryonic response as well as the variance around the
+        prediction for a set of comoving modes, redshift, and galaxy formation
+        model (three parameters).
+
+        Parameters
+        ----------
+
+        k: np.array
+            The Fourier modes at which the baryonic response has to be evaluated
+            expressed in units of [h / Mpc].
+
+        z: float
+            The redshift at which the baryonic response has to be evaluated.
+            The value has to be between 0 and 2.
+
+        sigma_gas: float
+            The offset in numbers of sigma (of the X-ray data) the gas fraction
+            in groups and clusters should be from the data used in the calibration
+            of the FLAMINGO model. The emulator was trained between -8 and +2
+            for a jet fraction of 0% and between -4 and 0 for a jet fraction of 100%.
+
+        sigma_star: float
+            The offset in numbers of sigma (of the data) the stellar mass function
+            should be from the data used in the calibration of the FLAMINGO model.
+            The emulator was trained between -1 and 0.
+
+        jet: float
+            The fraction of the AGN energy released in the form of collimated jets
+            (between 0 and 1). The original simulations exist only as purely thermal
+            AGN (i.e. with jet = 0) and with purely collimated jets (i.e. with jet = 1).
+
+        Returns
+        -------
+
+        baryon_ratio: np.array
+            The baryonic response at the modes k specified in the input.
+
+        baryon_ratio_variance: np.array
+            The estimated variance of the baryonic response from the emulator
+            at the modes k specified in the input.
+
+        Raises
+        ------
+
+        ValueError
+            When the input redshift is not in the range [0, 2].
+
+        """
 
         # Verify the validity of the redshift
         if z < 0.0 or z > 2.0:
@@ -127,14 +186,14 @@ class FlamingoBaryonResponseEmulator:
         variance_interpolator = inter.CubicSpline(self.k_bins, variance)
 
         # Return the interpolated ratios
-        ret_ratio = ratio_interpolator(np.log10(k))
-        ret_variance = variance_interpolator(np.log10(k))
+        baryon_ratio = ratio_interpolator(np.log10(k))
+        baryon_ratio_variance = variance_interpolator(np.log10(k))
 
         # Set the ratio at k-values below min_k to 1
-        ret_ratio[k < 10**self.min_k] = ratio_interpolator(self.min_k)
-        ret_variance[k < 10**self.min_k] = 0.0
+        baryon_ratio[k < 10**self.min_k] = ratio_interpolator(self.min_k)
+        baryon_ratio_variance[k < 10**self.min_k] = 0.0
 
-        return ret_ratio, ret_variance
+        return baryon_ratio, baryon_ratio_variance
 
     def __init__(self):
 
