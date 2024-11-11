@@ -111,7 +111,7 @@ class FlamingoBaryonResponseEmulator:
 
     def predict_with_variance(
         self, k: np.array, z: float, sigma_gas: float, sigma_star: float, jet: float
-    ):
+    ) -> tuple[np.array, np.array]:
         """
         Returns the predicted baryonic response as well as the variance around the
         prediction for a set of comoving modes, redshift, and galaxy formation
