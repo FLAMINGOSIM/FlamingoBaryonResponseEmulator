@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "FlamingoBaryonResponseEmulator"
-version = 1.0.0
-authos = [
+version = "1.0.0"
+authors = [
     { name="Matthieu Schaller", email="matthieu.schaller@gmail.com" }
 ]
 description="A Gaussian process emulator predicting the baryonic response for a range of wavelengths, redshifts, and galaxy formation model trained on the FLAMINGO suite of simulations."
@@ -16,8 +16,6 @@ dependencies = [
     "scipy",
     "swiftemulator",
     "george",
-    "pickle",
-    "lzma",
 ]
 classifiers = [
     "Programming Language :: Python :: 3.10",
