@@ -8,3 +8,21 @@ authors:
     email: schaller@strw.leidenuniv.nl
     affiliation: Leiden University
     orcid: 'https://orcid.org/0000-0002-2395-4902'
+version: 1.0.0
+doi: 10.1093/mnras/staf569
+date-released: 2025-05
+url: https://github.com/FLAMINGOSIM/FlamingoBaryonResponseEmulator
+preferred-citation:
+  type: article
+  authors:
+    - given-names: Matthieu
+      family-names: Schaller
+      orcid: 'https://orcid.org/0000-0002-2395-4902'
+  doi: 10.1093/mnras/staf569
+  journal: "Monthly Notices of the Royal Astronomical Society"
+  month: 5
+  year: 2025
+  volume: 539
+  number: 2
+  start: 1337
+  end: 1351
