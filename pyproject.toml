@@ -28,3 +28,6 @@ classifiers = [
 
 [project.urls]
 "Homepage" = "https://github.com/FLAMINGOSIM/FlamingoBaryonResponseEmulator"
+
+[tool.setuptools]
+license-files = []
