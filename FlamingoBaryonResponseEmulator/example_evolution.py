@@ -6,7 +6,7 @@ import flamingo_response_emulator as fre
 # Load FLAMINGO emulator
 emulator = fre.FlamingoBaryonResponseEmulator()
 
-# Mode bins
+# Mode bins in [h / Mpc]
 k_min = 10**-1.5
 k_max = 10**1.5
 num_bins_k = 121
