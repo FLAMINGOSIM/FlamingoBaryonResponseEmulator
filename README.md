@@ -36,21 +36,20 @@ Citation
 Please cite our paper when you use the FlamingoBaryonResponseEmulator::
 
 ```
-@ARTICLE{2024arXiv241017109S,
+@ARTICLE{FLAMINGO_Baryon_effect_emulator,
        author = {{Schaller}, Matthieu and {Schaye}, Joop and {Kugel}, Roi and {Broxterman}, Jeger C. and {van Daalen}, Marcel P.},
         title = "{The FLAMINGO project: Baryon effects on the matter power spectrum}",
-      journal = {arXiv e-prints},
-     keywords = {Astrophysics - Cosmology and Nongalactic Astrophysics},
-         year = 2024,
-        month = oct,
-          eid = {arXiv:2410.17109},
-        pages = {arXiv:2410.17109},
-          doi = {10.48550/arXiv.2410.17109},
+      journal = {Monthly Notices of the Royal Astronomical Society},
+     keywords = {large-scale structure of Universe, cosmology: theory, methods: numerical, Astrophysics - Cosmology and Nongalactic Astrophysics},
+         year = 2025,
+        month = may,
+       volume = {539},
+       number = {2},
+        pages = {1337-1351},
+          doi = {10.1093/mnras/staf569},
 archivePrefix = {arXiv},
        eprint = {2410.17109},
  primaryClass = {astro-ph.CO},
-       adsurl = {https://ui.adsabs.harvard.edu/abs/2024arXiv241017109S},
-      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
 }
 ```
 
