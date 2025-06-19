@@ -3,6 +3,8 @@ from scipy import interpolate as inter
 import swiftemulator.emulators.gaussian_process as se
 import pickle
 import lzma
+import os
+import inspect
 from attr import define
 
 
@@ -28,7 +30,13 @@ class FlamingoBaryonResponseEmulator:
 
         """
 
-        with lzma.open("data/emulator.xz", "r") as f:
+        data_path = os.path.join(
+            os.path.dirname(os.path.abspath(inspect.stack()[0][1])), "data"
+        )
+        filename = os.path.join(data_path, "emulator.xz")
+        print(filename)
+
+        with lzma.open(filename, "r") as f:
             self.PS_ratio_emulator = pickle.load(f)
 
     def predict(
