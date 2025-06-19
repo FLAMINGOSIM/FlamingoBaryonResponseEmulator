@@ -34,7 +34,6 @@ class FlamingoBaryonResponseEmulator:
             os.path.dirname(os.path.abspath(inspect.stack()[0][1])), "data"
         )
         filename = os.path.join(data_path, "emulator.xz")
-        print(filename)
 
         with lzma.open(filename, "r") as f:
             self.PS_ratio_emulator = pickle.load(f)
