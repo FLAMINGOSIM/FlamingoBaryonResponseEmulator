@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
-import flamingo_response_emulator as fre
+import FlamingoBaryonResponseEmulator as fre
 
 # Load FLAMINGO emulator
 emulator = fre.FlamingoBaryonResponseEmulator()
@@ -15,14 +15,14 @@ k_min_plot = 0.02
 k_max_plot = 50
 
 # Bins of redshifts
-redshifts = np.linspace(0., 2., 11)
+redshifts = np.linspace(0.0, 2.0, 11)
 
 # Specify baryon model
-fgas_sigma = 0.
-Mstar_sigma = 0.
-jet_fraction = 0.
+fgas_sigma = 0.0
+Mstar_sigma = 0.0
+jet_fraction = 0.0
 
-# Prepare figure 
+# Prepare figure
 ax = plt.subplot()
 ax.set_xscale("log")
 
@@ -34,13 +34,19 @@ colors_z = cm.plasma(np.linspace(0.0, 0.9, len(redshifts)))
 for i in range(np.size(redshifts)):
 
     # Call emulator
-    response = emulator.predict(bins_k, redshifts[i], fgas_sigma, Mstar_sigma, jet_fraction)
+    response = emulator.predict(
+        bins_k, redshifts[i], fgas_sigma, Mstar_sigma, jet_fraction
+    )
 
     # Plot response
-    ax.plot(bins_k, response, color=colors_z[i],
-            label="$z=%.1f$" % redshifts[i],
-            lw=2,
-            ms=1.5)
+    ax.plot(
+        bins_k,
+        response,
+        color=colors_z[i],
+        label="$z=%.1f$" % redshifts[i],
+        lw=2,
+        ms=1.5,
+    )
 
 # Plot range
 ax.set_xlim(k_min_plot, k_max_plot)
