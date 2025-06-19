@@ -31,3 +31,9 @@ classifiers = [
 
 [tool.setuptools]
 license-files = []
+
+[tool.setuptools.packages.find]
+where = ["FlamingoBaryonResponseEmulator"]
+
+[tool.setuptools.package-data]
+"*" = ["*.xy"]
