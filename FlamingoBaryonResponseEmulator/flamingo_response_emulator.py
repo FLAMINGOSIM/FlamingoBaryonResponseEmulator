@@ -54,7 +54,7 @@ class FlamingoBaryonResponseEmulator:
 
         z: float
             The redshift at which the baryonic response has to be evaluated.
-            The value has to be between 0 and 2.
+            The value has to be between 0 and 3.
 
         sigma_gas: float
             The offset in numbers of sigma (of the X-ray data) the gas fraction
@@ -82,14 +82,14 @@ class FlamingoBaryonResponseEmulator:
         ------
 
         ValueError
-            When the input redshift is not in the range [0, 2].
+            When the input redshift is not in the range [0, 3].
 
         """
 
         # Verify the validity of the redshift
-        if z < 0.0 or z > 2.0:
+        if z < 0.0 or z > 3.0:
             raise ValueError(
-                "The emulator has only been trained for redshifts between 0 and 2."
+                "The emulator has only been trained for redshifts between 0 and 3."
             )
 
         # Construct parameters in emulator space.
@@ -133,7 +133,7 @@ class FlamingoBaryonResponseEmulator:
 
         z: float
             The redshift at which the baryonic response has to be evaluated.
-            The value has to be between 0 and 2.
+            The value has to be between 0 and 3.
 
         sigma_gas: float
             The offset in numbers of sigma (of the X-ray data) the gas fraction
@@ -165,14 +165,14 @@ class FlamingoBaryonResponseEmulator:
         ------
 
         ValueError
-            When the input redshift is not in the range [0, 2].
+            When the input redshift is not in the range [0, 3].
 
         """
 
         # Verify the validity of the redshift
-        if z < 0.0 or z > 2.0:
+        if z < 0.0 or z > 3.0:
             raise ValueError(
-                "The emulator has only been trained for redshifts between 0 and 2."
+                "The emulator has only been trained for redshifts between 0 and 3."
             )
 
         # Construct parameters in emulator space.
